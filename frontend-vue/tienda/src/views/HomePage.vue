@@ -1,34 +1,36 @@
 <template>
-  <v-container>
-
+  <v-app>
     <Navbar />
     <v-main>
-      <v-container>
-        <h1>Bienvenido a Tienda Devlights</h1>
-        <p>Encuentra productos de calidad a precios competitivos.</p>
+      <v-container fluid class="main-container">
+        <Carrusel />
+        <v-container>
+          <h1>Bienvenido a Tienda Devlights</h1>
+          <p>Encuentra productos de calidad a precios competitivos.</p>
+        </v-container>
       </v-container>
     </v-main>
-
-    <v-footer color="#8e24aa" app dark>
-      <v-col class="text-center white--text">&copy; 2024 Tienda Devlights</v-col>
-    </v-footer>
-  </v-container>
+    <Footer />
+  </v-app>
 </template>
 
 <script>
-
 import Navbar from '@/components/Navbar.vue';
+import Carrusel from '@/components/Carrusel.vue'; 
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: "HomePage",
   components: {
-    Navbar, 
+    Navbar,
+    Carrusel,
+    Footer,
   },
 };
 </script>
 
 <style scoped>
-.v-main {
-  padding-top: 20px;
+.main-container {
+  padding: 0;
 }
 </style>
