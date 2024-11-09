@@ -7,7 +7,6 @@
       class="mr-4 d-flex align-center logo-transition"
     ></v-img>
 
-
     <v-text-field
       v-model="searchQuery"
       append-icon="mdi-magnify"
@@ -24,15 +23,25 @@
 
     <v-spacer></v-spacer>
 
+    <!-- Botón Home con ícono -->
+    <v-btn text to="/" class="ml-4 white--text button-hover">
+      <v-icon left>mdi-home</v-icon> Home
+    </v-btn>
+
+    
     <v-btn text to="/store/products" class="ml-4 white--text button-hover">
-     Ver productos
+      <v-icon left>mdi-cart</v-icon> Ver productos
     </v-btn>
-    <v-btn text to="/login" class="ml-4 white--text button-hover">
-      Iniciar sesión
-    </v-btn>
+
     <v-btn text to="/register" class="ml-4 white--text button-hover">
-      Registrarse
+      <v-icon left>mdi-account-plus</v-icon> Registrarse
     </v-btn>
+
+    <v-btn text to="/login" class="ml-4 white--text button-hover">
+      <v-icon left>mdi-login</v-icon> Iniciar sesión
+    </v-btn>
+
+    
   </v-app-bar>
 </template>
 
@@ -48,8 +57,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .v-btn {
   font-size: 1.1rem;
   text-transform: none;

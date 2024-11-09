@@ -4,12 +4,11 @@
     <v-main>
       <v-container fluid class="main-container">
         <Carrusel />
-        <v-container>
-          <h1>Bienvenido a Tienda Devlights</h1>
-          <p>Encuentra productos de calidad a precios competitivos.</p>
-        </v-container>
+      
       </v-container>
+      <Banner />
     </v-main>
+    
     <Footer />
   </v-app>
 </template>
@@ -18,6 +17,7 @@
 import Navbar from '@/components/Navbar.vue';
 import Carrusel from '@/components/Carrusel.vue'; 
 import Footer from '@/components/Footer.vue';
+import Banner from '@/components/Banner.vue';
 
 export default {
   name: "HomePage",
@@ -25,6 +25,7 @@ export default {
     Navbar,
     Carrusel,
     Footer,
+    Banner,
   },
 };
 </script>
