@@ -19,7 +19,7 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="200" sm="200" md="11" lg="350">
+      <v-col cols="100" sm="60" md="11" lg="50">
         <v-img
           :src="require('@/assets/bannersito.png')"
           class="banner-img mx-auto mb-2"

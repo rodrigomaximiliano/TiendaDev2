@@ -1,22 +1,21 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.database import db
-from app.schemas import UserSchema, UserCreateSchema  # Agrega UserCreateSchema para registrar nuevos usuarios
+from app.schemas import UserSchema, UserCreateSchema
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
-from app.schemas import UserSchema, UserCreateSchema
+from jose import jwt, JWTError
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "your-secret-key"  # Considera usar un valor más seguro y almacenarlo en un entorno seguro
+SECRET_KEY = "your-secret-key" 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})  # Añadimos la fecha de expiración
+    to_encode.update({"exp": expire}) 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -36,21 +35,21 @@ async def login(user: UserSchema):
     if not db_user or not pwd_context.verify(user.password, db_user["password"]):
         raise HTTPException(status_code=400, detail="Invalid credentials")
     
-    # Generar el token JWT si las credenciales son correctas
+    
     access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "username": db_user["username"]}
 
 @router.post("/register")
 async def register(user: UserCreateSchema):
-    # Comprobar si el usuario ya existe
+    
     db_user = await get_user(user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     
-    # Cifrar la contraseña
+    
     hashed_password = pwd_context.hash(user.password)
     
-    # Crear el nuevo usuario en la base de datos
+    
     new_user = {
         "username": user.username,
         "password": hashed_password,
@@ -58,7 +57,7 @@ async def register(user: UserCreateSchema):
         "created_at": datetime.utcnow(),
     }
     
-    # Guardar en la base de datos
+    
     await db["users"].insert_one(new_user)
     
     return {"message": "User registered successfully"}

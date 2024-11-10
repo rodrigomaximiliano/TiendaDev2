@@ -9,7 +9,7 @@ router = APIRouter()
 async def create_order(current_user=Depends(get_user)):
     cart_items = await db["carts"].find({"user": current_user["username"]}).to_list(length=100)
     if not cart_items:
-        raise HTTPException(status_code=400, detail="Cart is empty")
+        raise HTTPException(status_code=400, detail="El carrito está vacío")
 
     total_price = 0
     for item in cart_items:
@@ -21,9 +21,8 @@ async def create_order(current_user=Depends(get_user)):
         "user": current_user["username"],
         "items": cart_items,
         "total_price": total_price,
-        "status": "pending"
+        "status": "pendiente"
     }
     await db["orders"].insert_one(order_data)
-    await db["carts"].delete_many({"user": current_user["username"]})  # Vaciar carrito después de la compra
-    return {"msg": "Order created successfully", "total_price": total_price}
-
+    await db["carts"].delete_many({"user": current_user["username"]})
+    return {"msg": "Orden creada exitosamente", "total_price": total_price}

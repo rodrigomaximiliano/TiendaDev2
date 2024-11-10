@@ -19,3 +19,7 @@ class ProductSchema(BaseModel):
 class OrderSchema(BaseModel):
     total_price: float
     status: str
+
+class AddToCartSchema(BaseModel):
+    product_id: str
+    quantity: int

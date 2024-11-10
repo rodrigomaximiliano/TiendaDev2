@@ -9,6 +9,8 @@ from app.mi_cuenta import router as mi_cuenta_router
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
+from jose import jwt, JWTError
+
 
 load_dotenv()
 app = FastAPI()

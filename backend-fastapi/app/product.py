@@ -4,7 +4,6 @@ from app.schemas import ProductSchema
 from bson import ObjectId
 from app.auth import get_user
 from typing import Optional
-from pydantic import condecimal
 
 router = APIRouter()
 
@@ -18,17 +17,17 @@ def product_serializer(product) -> dict:
         "seller": product.get("seller"),
     }
 
-@router.post("/product")
+@router.post("/create")
 async def create_product(product: ProductSchema, current_user=Depends(get_user)):
     if product.price <= 0:
-        raise HTTPException(status_code=400, detail="Price must be positive")
+        raise HTTPException(status_code=400, detail="El precio debe ser positivo")
     if product.quantity < 0:
-        raise HTTPException(status_code=400, detail="Quantity cannot be negative")
+        raise HTTPException(status_code=400, detail="La cantidad no puede ser negativa")
     
     product_data = product.dict()
     product_data["seller"] = current_user["username"]
     await db["products"].insert_one(product_data)
-    return {"msg": "Product created successfully"}
+    return {"msg": "Producto creado exitosamente"}
 
 @router.get("/products")
 async def list_products(

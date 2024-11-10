@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="#5d87d4" dark elevate>
+  <v-app-bar app color="#5d87d4">
     <v-img 
       src="/logo.svg" 
       alt="Logo" 
@@ -23,25 +23,36 @@
 
     <v-spacer></v-spacer>
 
-    <!-- Botón Home con ícono -->
     <v-btn text to="/" class="ml-4 white--text button-hover">
-      <v-icon left>mdi-home</v-icon> Home
+      <v-icon left>mdi-home</v-icon> Inicio
     </v-btn>
 
-    
     <v-btn text to="/store/products" class="ml-4 white--text button-hover">
       <v-icon left>mdi-cart</v-icon> Ver productos
     </v-btn>
 
-    <v-btn text to="/register" class="ml-4 white--text button-hover">
-      <v-icon left>mdi-account-plus</v-icon> Registrarse
-    </v-btn>
+    <template v-if="isAuthenticated">
+      <v-btn text to="/cart" class="ml-4 white--text button-hover">
+        <v-icon left>mdi-cart</v-icon> Carrito
+      </v-btn>
 
-    <v-btn text to="/login" class="ml-4 white--text button-hover">
-      <v-icon left>mdi-login</v-icon> Iniciar sesión
-    </v-btn>
+      <v-btn text class="ml-4 white--text button-hover">
+        <v-icon left>mdi-account</v-icon> {{ username }}
+      </v-btn>
 
-    
+      <v-btn text @click="logout" class="ml-4 white--text button-hover">
+        <v-icon left>mdi-logout</v-icon> Cerrar sesión
+      </v-btn>
+    </template>
+
+    <template v-else>
+      <v-btn text to="/register" class="ml-4 white--text button-hover">
+        <v-icon left>mdi-account-plus</v-icon> Registrarse
+      </v-btn>
+      <v-btn text to="/login" class="ml-4 white--text button-hover">
+        <v-icon left>mdi-login</v-icon> Iniciar sesión
+      </v-btn>
+    </template>
   </v-app-bar>
 </template>
 
@@ -51,90 +62,30 @@ export default {
   data() {
     return {
       searchQuery: "",
+      username: localStorage.getItem("username") || null,
     };
+  },
+  computed: {
+    isAuthenticated() {
+      return !!localStorage.getItem("token");
+    },
+  },
+  watch: {
+    isAuthenticated(newVal) {
+      if (newVal) {
+        this.username = localStorage.getItem("username");
+      } else {
+        this.username = null;
+      }
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      this.username = null;
+      this.$router.push("/login");
+    },
   },
 };
 </script>
-
-<style scoped>
-.v-btn {
-  font-size: 1.1rem;
-  text-transform: none;
-  font-weight: 400;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
-}
-
-.v-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: scale(1.05);
-}
-
-.v-app-bar {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0 24px;
-  background-color: #9540a7;
-}
-
-.logo-transition:hover {
-  transform: scale(1.1);
-  transition: transform 0.3s ease-in-out;
-}
-
-.button-hover:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  transform: scale(1.05);
-}
-
-.search-bar {
-  margin-right: 16px;
-  transition: all 0.3s ease;
-  max-width: 350px;
-}
-
-.search-bar input {
-  font-size: 1rem;
-}
-
-.search-bar .v-input__control {
-  border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.search-bar .v-input__append-inner {
-  background-color: transparent;
-}
-
-.search-bar .v-input__append-inner .v-icon {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.search-bar input:focus {
-  border-color: #7e4baf;
-  box-shadow: 0 0 12px rgba(126, 75, 175, 0.4);
-}
-
-.search-bar:hover {
-  transform: scale(1.05);
-}
-
-@media (max-width: 600px) {
-  .title {
-    font-size: 1.3rem;
-  }
-
-  .mr-4 {
-    margin-right: 20px;
-  }
-
-  .ml-4 {
-    margin-left: 12px;
-  }
-
-  .search-bar {
-    max-width: 200px;
-  }
-}
-</style>

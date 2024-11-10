@@ -1,11 +1,12 @@
 <template>
   <v-container>
     <v-row>
-      <v-col v-for="product in cartItems" :key="product.id" cols="12" md="4">
+      <v-col v-for="item in cartItems" :key="item._id" cols="12" md="4">
         <v-card>
-          <v-card-title>{{ product.name }}</v-card-title>
-          <v-card-subtitle>{{ product.price }}</v-card-subtitle>
-          <v-btn @click="removeFromCart(product.id)" color="error">Eliminar</v-btn>
+          <v-card-title>{{ item.product_id.name }}</v-card-title>
+          <v-card-subtitle>\${{ item.product_id.price }}</v-card-subtitle>
+          <v-text-field v-model="item.quantity" label="Cantidad" type="number" min="1"></v-text-field>
+          <v-btn @click="removeFromCart(item._id)" color="error">Eliminar</v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -14,26 +15,43 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'Cart',
   data() {
     return {
-      cartItems: [
-        { id: 1, name: 'Producto 1', price: '$100' },
-        { id: 2, name: 'Producto 2', price: '$150' },
-      ]
+      cartItems: []
     };
   },
+  mounted() {
+    this.fetchCartItems();
+  },
   methods: {
-    removeFromCart(id) {
-      this.cartItems = this.cartItems.filter(item => item.id !== id);
+    async fetchCartItems() {
+      try {
+        const response = await axios.get('http://localhost:8000/cart');
+        this.cartItems = response.data.cart;
+      } catch (error) {
+        console.error('Error al obtener los productos del carrito', error);
+      }
     },
-    checkout() {
-     
+    async removeFromCart(cartId) {
+      try {
+        await axios.post('http://localhost:8000/cart/remove', { cart_id: cartId });
+        this.cartItems = this.cartItems.filter(item => item._id !== cartId);
+      } catch (error) {
+        console.error('Error al eliminar el producto del carrito', error);
+      }
+    },
+    async checkout() {
+      try {
+        const response = await axios.post('http://localhost:8000/orders/create');
+        alert(`Compra realizada. Total: $${response.data.total_price}`);
+        this.cartItems = [];
+      } catch (error) {
+        console.error('Error al realizar la compra', error);
+      }
     }
   }
 };
 </script>
-
-<style scoped>
-</style>
