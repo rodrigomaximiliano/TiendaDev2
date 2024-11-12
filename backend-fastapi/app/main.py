@@ -1,6 +1,5 @@
-
-from fastapi import FastAPI
-from app.auth import router as auth_router
+from fastapi import FastAPI, Depends, HTTPException
+from app.auth import router as auth_router, verify_token 
 from app.product import router as product_router
 from app.admin import router as admin_router
 from app.cart import router as cart_router
@@ -9,11 +8,12 @@ from app.mi_cuenta import router as mi_cuenta_router
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
-from jose import jwt, JWTError
 
 
 load_dotenv()
+
 app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.include_router(auth_router, prefix="/auth")
 app.include_router(product_router, prefix="/store")
 app.include_router(admin_router, prefix="/admin")
@@ -30,3 +31,8 @@ app.include_router(cart_router, prefix="/cart")
 app.include_router(order_router, prefix="/orders")
 app.include_router(mi_cuenta_router, prefix="/mi_cuenta")
 
+
+@app.get("/protected-endpoint")
+async def protected_endpoint(token: str = Depends(verify_token)):
+    
+    return {"message": "This is a protected endpoint!"}

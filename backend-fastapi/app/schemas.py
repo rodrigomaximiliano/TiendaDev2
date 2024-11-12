@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
+from bson import ObjectId
+
 
 class UserSchema(BaseModel):
     username: str
@@ -23,3 +25,12 @@ class OrderSchema(BaseModel):
 class AddToCartSchema(BaseModel):
     product_id: str
     quantity: int
+
+class CartItemResponse(BaseModel):
+    id: str  # Este será el ID de carrito convertido a string
+    product_id: str  # Este será el ID del producto convertido a string
+    quantity: int
+    added_at: str  # La fecha de cuando fue añadido
+
+    class Config:
+        from_attributes = True
