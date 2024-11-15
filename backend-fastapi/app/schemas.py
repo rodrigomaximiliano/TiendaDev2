@@ -16,7 +16,7 @@ class ProductSchema(BaseModel):
     description: str
     price: float
     quantity: int
-
+    imagen: Optional[str] = None
 
 class OrderSchema(BaseModel):
     total_price: float

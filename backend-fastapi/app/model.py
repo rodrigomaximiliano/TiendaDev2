@@ -14,3 +14,4 @@ class Product(BaseModel):
     price: float
     quantity: int
     seller: str
+    imagen: Optional[str] = None 

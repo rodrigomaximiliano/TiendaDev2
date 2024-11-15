@@ -49,7 +49,7 @@ export const useProductStore = defineStore('productStore', {
 
         return response.data.msg; 
       } catch (error) {
-        console.error("Error al agregar al carrito:", error.response?.data || error.message);
+        console.error("Error al agregar al carritoss:", error.response?.data || error.message);
         throw error;  
       }
     }

@@ -8,7 +8,7 @@ from app.mi_cuenta import router as mi_cuenta_router
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
-
+from fastapi.staticfiles import StaticFiles
 
 load_dotenv()
 
@@ -32,7 +32,4 @@ app.include_router(order_router, prefix="/orders")
 app.include_router(mi_cuenta_router, prefix="/mi_cuenta")
 
 
-@app.get("/protected-endpoint")
-async def protected_endpoint(token: str = Depends(verify_token)):
-    
-    return {"message": "This is a protected endpoint!"}
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
