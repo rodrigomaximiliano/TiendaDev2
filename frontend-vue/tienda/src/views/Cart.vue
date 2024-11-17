@@ -21,7 +21,6 @@
             </v-card-text>
 
             <v-card-actions>
-              <!-- Botón para eliminar del carrito -->
               <v-btn @click="removeProductFromCart(item.product_id)" color="red" dark>
                 Eliminar
               </v-btn>
@@ -84,7 +83,7 @@ export default {
   margin-top: 10px;
 }
 
-/* Espaciado extra para las tarjetas */
+
 .v-card {
   transition: box-shadow 0.3s ease;
 }

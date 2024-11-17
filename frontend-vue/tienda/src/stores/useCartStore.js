@@ -7,17 +7,18 @@ export const useCartStore = defineStore('cartStore', {
   }),
 
   actions: {
-   
     async fetchCart() {
       const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username"); // Obtener el username desde el localStorage
 
-      if (!token) {
-        console.error("Token no encontrado. Por favor, inicie sesión.");
+      if (!token || !username) {
+        console.error("Token o username no encontrados. Por favor, inicie sesión.");
         return;
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/cart/view', {
+        // Incluir el username en la URL
+        const response = await axios.get(`http://localhost:8000/cart/view?username=${username}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.cart = response.data.cart;  
@@ -27,18 +28,19 @@ export const useCartStore = defineStore('cartStore', {
       }
     },
 
-    // Eliminar producto del carrito
     async removeProductFromCart(productId) {
       const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username"); // Obtener el username desde el localStorage
 
-      if (!token) {
+      if (!token || !username) {
         console.error("Usuario no ha iniciado sesión.");
         alert('Por favor, inicia sesión para eliminar productos del carrito.');
         return;
       }
 
       try {
-        const response = await axios.delete(`http://localhost:8000/cart/remove?product_id=${productId}`, {
+        // Incluir el username en la URL para la eliminación del producto
+        const response = await axios.delete(`http://localhost:8000/cart/remove?username=${username}&product_id=${productId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Producto eliminado del carrito:', response.data);
