@@ -63,7 +63,7 @@ export default {
     const isLoading = productStore.isLoading;
     const hasError = productStore.hasError;
     const errorMessage = productStore.error;
-    const quantities = ref({}); // Mantiene la cantidad seleccionada para cada producto
+    const quantities = ref({});
     
     const incrementQuantity = (product) => {
       quantities.value[product.id] = (quantities.value[product.id] || 1) + 1;
@@ -76,15 +76,14 @@ export default {
     };
 
     const addToCart = async (product, quantity) => {
-  try {
-    const msg = await productStore.addToCart(product.id, quantity);
-    alert(msg); // Muestra el mensaje de éxito
-    cartStore.addProductToCart(product.id, quantity);
-  } catch {
-    // No hace nada en caso de error, omitiendo la alerta de error
-  }
-};
-
+      try {
+        const msg = await productStore.addToCart(product.id, quantity);
+        alert(msg); 
+        cartStore.addProductToCart(product.id, quantity);
+      } catch {
+        // Error ignorado intencionalmente
+      }
+    };
 
     if (!productsList.length) {
       productStore.fetchProducts();
