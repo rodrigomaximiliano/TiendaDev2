@@ -1,41 +1,94 @@
 <template>
-  <div class="create-product">
-    <h2>Crear Nuevo Producto</h2>
+  <v-app>
+    <Navbar />
     
-    <form @submit.prevent="submitProduct">
-      <div class="form-group">
-        <label for="name">Nombre del Producto</label>
-        <input type="text" id="name" v-model="product.name" required />
-      </div>
+    <v-container class="mt-5" max-width="600">
+      <v-row>
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Crear Nuevo Producto</span>
+            </v-card-title>
+            
+            <v-card-subtitle>
+              Rellena los detalles del producto y haz clic en "Crear Producto" para agregarlo a la tienda.
+            </v-card-subtitle>
 
-      <div class="form-group">
-        <label for="description">Descripción</label>
-        <textarea id="description" v-model="product.description" required></textarea>
-      </div>
+            <v-form @submit.prevent="submitProduct" v-model="valid">
+              <v-card-text>
+                <v-text-field
+                  v-model="product.name"
+                  label="Nombre del Producto"
+                  required
+                  :rules="[rules.required]"
+                ></v-text-field>
+                
+                <v-textarea
+                  v-model="product.description"
+                  label="Descripción"
+                  required
+                  :rules="[rules.required]"
+                ></v-textarea>
+                
+                <v-text-field
+                  v-model="product.price"
+                  label="Precio"
+                  type="number"
+                  min="0"
+                  required
+                  :rules="[rules.required, rules.positiveNumber]"
+                ></v-text-field>
+                
+                <v-text-field
+                  v-model="product.quantity"
+                  label="Cantidad"
+                  type="number"
+                  min="0"
+                  required
+                  :rules="[rules.required, rules.positiveNumber]"
+                ></v-text-field>
 
-      <div class="form-group">
-        <label for="price">Precio</label>
-        <input type="number" id="price" v-model="product.price" min="0" required />
-      </div>
+                <!-- Campo para seleccionar imagen -->
+                <v-file-input
+                  v-model="product.image"
+                  label="Selecciona una Imagen"
+                  accept="image/*"
+                  required
+                  :rules="[rules.required]"
+                ></v-file-input>
 
-      <div class="form-group">
-        <label for="quantity">Cantidad</label>
-        <input type="number" id="quantity" v-model="product.quantity" min="0" required />
-      </div>
+              </v-card-text>
 
-      <button type="submit" :disabled="isLoading">Crear Producto</button>
-    </form>
+              <v-card-actions>
+                <v-btn
+                  :loading="isLoading"
+                  :disabled="isLoading || !valid"
+                  type="submit"
+                  color="primary"
+                >
+                  Crear Producto
+                </v-btn>
+              </v-card-actions>
 
-    <div v-if="message" :class="message.type">
-      <p>{{ message.text }}</p>
-    </div>
-  </div>
+              <v-alert v-if="message" :type="message.type" dismissible>
+                {{ message.text }}
+              </v-alert>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
 import axios from 'axios';
+import Navbar from '../components/Navbar.vue';  // Importar el componente Navbar
 
 export default {
+  components: {
+    Navbar
+  },
   data() {
     return {
       product: {
@@ -43,30 +96,48 @@ export default {
         description: '',
         price: 0,
         quantity: 0,
+        image: null,  // Nuevo campo para la imagen
       },
       isLoading: false,
       message: null,
+      valid: false,
+      rules: {
+        required: value => !!value || 'Este campo es requerido.',
+        positiveNumber: value => value > 0 || 'Debe ser un número positivo.',
+      },
     };
   },
   methods: {
     async submitProduct() {
       this.isLoading = true;
       try {
-        // Obtener el token de localStorage
         const token = localStorage.getItem('token');
         
         if (!token) {
           throw new Error("No se encontró el token de autenticación.");
         }
 
-        // Enviar la solicitud POST al servidor, solo con el token en los encabezados
-        const response = await axios.post('http://localhost:8000/store/create', this.product, {
+        // Obtener el username del token o de otro lugar
+        const username = localStorage.getItem('username');
+        if (!username) {
+          throw new Error("No se encontró el username.");
+        }
+
+        // Crear un FormData para enviar los datos incluyendo la imagen
+        const formData = new FormData();
+        formData.append('name', this.product.name);
+        formData.append('description', this.product.description);
+        formData.append('price', this.product.price);
+        formData.append('quantity', this.product.quantity);
+        formData.append('image', this.product.image);  // Agregar imagen al FormData
+
+        const response = await axios.post(`http://localhost:8000/store/create?username=${username}`, formData, {
           headers: {
-            'Authorization': `Bearer ${token}`,  // Enviar el token en los encabezados
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',  // Especificar que se envía un formulario con archivos
           }
         });
 
-        // Mostrar mensaje de éxito
         this.message = {
           type: 'success',
           text: response.data.msg || 'Producto creado exitosamente.',
@@ -78,9 +149,9 @@ export default {
           description: '',
           price: 0,
           quantity: 0,
+          image: null,
         };
       } catch (error) {
-        // Manejo de errores
         this.message = {
           type: 'error',
           text: error.response?.data?.detail || error.message || 'Hubo un error al crear el producto.',
@@ -94,58 +165,33 @@ export default {
 </script>
 
 <style scoped>
-.create-product {
+/* Estilos personalizados para mejorar la vista */
+.v-btn {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+}
+
+.v-card {
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.create-product h2 {
+.v-card-title {
   text-align: center;
+  font-weight: bold;
 }
 
-.form-group {
-  margin-bottom: 1em;
+.v-text-field, .v-textarea, .v-file-input {
+  margin-bottom: 20px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5em;
+.v-alert {
+  margin-top: 20px;
 }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.8em;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  width: 100%;
-  padding: 1em;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1.2em;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #ccc;
-}
-
-.success {
-  color: green;
-}
-
-.error {
-  color: red;
+@media (max-width: 600px) {
+  .v-btn {
+    width: 100%;
+  }
 }
 </style>
