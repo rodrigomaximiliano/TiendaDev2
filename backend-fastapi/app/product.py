@@ -2,9 +2,9 @@ import os
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, File, UploadFile
 from app.database import db
-from app.schemas import ProductSchema
 from app.auth import get_user
 from bson import ObjectId
+from fastapi import Form
 
 router = APIRouter()
 
@@ -22,29 +22,38 @@ def product_serializer(product) -> dict:
     }
 
 @router.post("/create")
-async def create_product(product: ProductSchema, current_user=Depends(get_user)):
-    if product.price <= 0:
+async def create_product_with_image(
+    name: str = Form(...),
+    description: str = Form(...),
+    price: float = Form(...),
+    quantity: int = Form(...),
+    file: UploadFile = File(...),  # Asegúrate de que el nombre del campo sea 'file'
+    current_user=Depends(get_user),
+):
+    if price <= 0:
         raise HTTPException(status_code=400, detail="El precio debe ser positivo")
-    if product.quantity < 0:
+    if quantity < 0:
         raise HTTPException(status_code=400, detail="La cantidad no puede ser negativa")
-    
-    product_data = product.dict()
-    product_data["seller"] = current_user["username"]
-    
-    await db["products"].insert_one(product_data)
-    return {"msg": "Producto creado exitosamente"}
 
-@router.post("/upload_image")
-async def upload_image(file: UploadFile = File(...)):
+    # Guardar la imagen
     file_location = f"app/static/images/{file.filename}"
-    
     try:
         with open(file_location, "wb") as f:
             f.write(file.file.read())
     except Exception:
         raise HTTPException(status_code=500, detail="Error al guardar la imagen")
 
-    return {"imagen": f"/static/images/{file.filename}"}
+    # Crear el producto
+    product_data = {
+        "name": name,
+        "description": description,
+        "price": price,
+        "quantity": quantity,
+        "seller": current_user["username"],
+        "imagen": f"/static/images/{file.filename}",
+    }
+    await db["products"].insert_one(product_data)
+    return {"msg": "Producto creado exitosamente"}
 
 @router.get("/products")
 async def list_products(
@@ -71,36 +80,70 @@ async def list_products(
         "products": [product_serializer(product) for product in products]
     }
 
-@router.put("/update/{product_id}")
-async def update_product(
-    product_id: str, 
-    product_update: ProductSchema, 
-    current_user=Depends(get_user)
-):
-    product = await db["products"].find_one({"_id": ObjectId(product_id)})
-    if not product:
-        raise HTTPException(status_code=404, detail="Producto no encontrado")
-    
-    if product["seller"] != current_user["username"]:
-        raise HTTPException(status_code=403, detail="No tienes permiso para actualizar este producto")
-    
-    if product_update.price <= 0:
-        raise HTTPException(status_code=400, detail="El precio debe ser positivo")
-    if product_update.quantity < 0:
-        raise HTTPException(status_code=400, detail="La cantidad no puede ser negativa")
-    
-    updated_data = product_update.dict(exclude_unset=True)
-    await db["products"].update_one({"_id": ObjectId(product_id)}, {"$set": updated_data})
-    return {"msg": "Producto actualizado exitosamente"}
-
-@router.delete("/delete/{product_id}")
+@router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user=Depends(get_user)):
+    # Verificar si el producto existe
     product = await db["products"].find_one({"_id": ObjectId(product_id)})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
-    
+
+    # Verificar si el usuario es el vendedor del producto
     if product["seller"] != current_user["username"]:
         raise HTTPException(status_code=403, detail="No tienes permiso para eliminar este producto")
+
+    # Eliminar el producto
+    result = await db["products"].delete_one({"_id": ObjectId(product_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=500, detail="Error al eliminar el producto")
     
-    await db["products"].delete_one({"_id": ObjectId(product_id)})
     return {"msg": "Producto eliminado exitosamente"}
+
+@router.put("/products/{product_id}")
+async def edit_product(
+    product_id: str,
+    name: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    price: Optional[float] = Form(None),
+    quantity: Optional[int] = Form(None),
+    file: Optional[UploadFile] = File(None),
+    current_user=Depends(get_user)
+):
+    # Verificar si el producto existe
+    product = await db["products"].find_one({"_id": ObjectId(product_id)})
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+
+    # Verificar si el usuario es el vendedor del producto
+    if product["seller"] != current_user["username"]:
+        raise HTTPException(status_code=403, detail="No tienes permiso para editar este producto")
+
+    # Preparar los datos para la actualización
+    update_data = {}
+    if name:
+        update_data["name"] = name
+    if description:
+        update_data["description"] = description
+    if price is not None:
+        update_data["price"] = price
+    if quantity is not None:
+        update_data["quantity"] = quantity
+    if file:
+        # Guardar la nueva imagen si se sube
+        file_location = f"app/static/images/{file.filename}"
+        try:
+            with open(file_location, "wb") as f:
+                f.write(file.file.read())
+        except Exception:
+            raise HTTPException(status_code=500, detail="Error al guardar la nueva imagen")
+        update_data["imagen"] = f"/static/images/{file.filename}"
+
+    # Actualizar el producto
+    result = await db["products"].update_one(
+        {"_id": ObjectId(product_id)},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=500, detail="Error al actualizar el producto")
+
+    return {"msg": "Producto actualizado exitosamente"}

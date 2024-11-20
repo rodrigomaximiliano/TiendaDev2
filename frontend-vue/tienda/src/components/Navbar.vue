@@ -5,7 +5,7 @@
       src="/logo.svg" 
       alt="Logo" 
       max-width="150" 
-      class="mr-6 d-flex align-center logo-transition" 
+      class="mr-6 ml-4 d-flex align-center logo-transition" 
     ></v-img>
 
     <v-spacer></v-spacer>
