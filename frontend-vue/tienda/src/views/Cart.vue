@@ -1,30 +1,56 @@
 <template>
   <div>
     <Navbar />
-    <v-container fluid class="pa-4">
+    <v-container fluid class="pa-4 mt-8"> <!-- Se agregó más espacio con mt-8 -->
       <!-- Sección de productos en el carrito -->
       <v-row>
-        <v-col v-for="item in cartItems" :key="item.product_id" cols="12" md="6" lg="4">
-          <v-card class="mx-auto my-3" max-width="400" elevation="12" rounded @mouseenter="hover = true" @mouseleave="hover = false">
+        <v-col 
+          v-for="item in cartItems" 
+          :key="item.product_id" 
+          cols="12" 
+          md="6" 
+          lg="4"
+        >
+          <v-card 
+            class="mx-auto my-3" 
+            max-width="400" 
+            elevation="12" 
+            rounded
+          >
             <!-- Imagen del producto -->
-            <v-img :src="`http://localhost:8000${item.imagen}`" height="200px" class="rounded-t-lg" :class="{'v-img-hover': hover}"></v-img>
+            <v-img 
+              :src="`http://localhost:8000${item.imagen}`" 
+              height="200px" 
+              class="rounded-t-lg"
+            ></v-img>
 
-            <v-card-title class="headline font-weight-bold">{{ item.name }}</v-card-title>
-
+            <!-- Nombre y precio del producto -->
+            <v-card-title class="headline font-weight-bold">
+              {{ item.name }}
+            </v-card-title>
             <v-card-subtitle class="font-weight-bold text-lg text-secondary">
               <span class="text-primary">${{ item.price }}</span>
             </v-card-subtitle>
 
+            <!-- Cantidad -->
             <v-card-text class="d-flex justify-between align-center">
               <div>Cantidad: {{ item.quantity }}</div>
             </v-card-text>
 
-            <!-- Sección de eliminar o ver detalles -->
-            <v-card-actions class="d-flex justify-center">
-              <v-btn @click="viewProductDetails(item.product_id)" color="primary" class="text-uppercase font-weight-bold">
+            <!-- Botones -->
+            <v-card-actions class="d-flex justify-space-between">
+              <v-btn 
+                @click="viewProductDetails(item.product_id)" 
+                color="primary" 
+                class="text-uppercase font-weight-bold"
+              >
                 Ver detalles
               </v-btn>
-              <v-btn @click="removeProductFromCart(item.product_id)" color="red" class="text-uppercase font-weight-bold">
+              <v-btn 
+                @click="removeProductFromCart(item.product_id)" 
+                color="red" 
+                class="text-uppercase font-weight-bold"
+              >
                 Eliminar
               </v-btn>
             </v-card-actions>
@@ -41,8 +67,6 @@
         </v-col>
       </v-row>
 
-      <v-divider></v-divider>
-
       <!-- Resumen de la compra -->
       <v-row>
         <v-col cols="12" class="text-center">
@@ -51,9 +75,14 @@
             <span>Total de la compra: </span>
             <span class="text-primary">${{ totalAmount }}</span>
           </div>
-
-          <!-- Botón de pago con animación hover -->
-          <v-btn @click="checkout" color="green" large block class="mt-4 rounded-lg shadow-2 hover-animation">
+          <!-- Botón de pago -->
+          <v-btn 
+            @click="checkout" 
+            color="green" 
+            large 
+            block 
+            class="mt-4 rounded-lg shadow-2 hover-animation"
+          >
             Ir a pagar
           </v-btn>
         </v-col>
@@ -63,21 +92,22 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
-import { useCartStore } from '@/stores/useCartStore';  
+import { computed, onMounted } from 'vue';
+import { useCartStore } from '@/stores/useCartStore';
 import Navbar from '@/components/Navbar.vue';
 
 export default {
   name: 'Cart',
   components: {
-    Navbar
+    Navbar,
   },
   setup() {
     const store = useCartStore();
     const cartItems = computed(() => store.cart);
-    const hover = ref(false); // Estado para animación de imagen
 
-    const totalAmount = computed(() => cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2));
+    const totalAmount = computed(() => 
+      cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+    );
 
     onMounted(() => {
       store.fetchCart();
@@ -95,12 +125,17 @@ export default {
       console.log(`Viewing details for product with ID: ${productId}`);
     };
 
-    return { cartItems, totalAmount, removeProductFromCart, checkout, hover, viewProductDetails };
-  }
+    return { cartItems, totalAmount, removeProductFromCart, checkout, viewProductDetails };
+  },
 };
 </script>
 
 <style scoped>
+/* Espaciado extra con el navbar */
+.mt-8 {
+  margin-top: 64px; /* Más espacio con el navbar */
+}
+
 .v-btn {
   margin-top: 10px;
   text-transform: uppercase;
@@ -120,16 +155,8 @@ export default {
   transition: transform 0.3s ease;
 }
 
-.v-img-hover {
-  transform: scale(1.05);
-}
-
 .v-row {
   margin-top: 20px;
-}
-
-.v-col {
-  padding: 12px;
 }
 
 .v-alert {

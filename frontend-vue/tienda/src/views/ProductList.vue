@@ -1,10 +1,9 @@
 <template>
   <v-app>
     <Navbar />
-    <!-- Aumentar más el margen superior para separar del Navbar -->
-    <v-container class="pt-12">
+    <v-container class="pt-16">
       <!-- Filtro de ordenamiento de productos -->
-      <v-row>
+      <v-row class="mt-8">
         <v-col cols="12" md="4" class="mb-4">
           <v-select
             v-model="selectedFilter"
@@ -86,10 +85,9 @@ export default {
     const hasError = productStore.hasError;
     const errorMessage = productStore.error;
     const quantities = ref({});
-    const selectedFilter = ref('priceAsc'); // Filtro seleccionado por defecto
-    const filters = ['priceAsc', 'priceDesc', 'nameAsc', 'nameDesc']; // Opciones de filtro
+    const selectedFilter = ref('Precio Menor a Mayor');
+    const filters = ['Precio Menor a Mayor', 'Precio Mayor a Menor'];
 
-    // Funciones para incrementar y decrementar la cantidad
     const incrementQuantity = (product) => {
       quantities.value[product.id] = (quantities.value[product.id] || 1) + 1;
     };
@@ -114,20 +112,13 @@ export default {
       productStore.fetchProducts();
     }
 
-    // Computed property para ordenar los productos según el filtro seleccionado
     const filteredProducts = computed(() => {
       let sortedProducts = [...productsList];
-
-      if (selectedFilter.value === 'priceAsc') {
+      if (selectedFilter.value === 'Precio Menor a Mayor') {
         sortedProducts = sortedProducts.sort((a, b) => a.price - b.price);
-      } else if (selectedFilter.value === 'priceDesc') {
+      } else if (selectedFilter.value === 'Precio Mayor a Menor') {
         sortedProducts = sortedProducts.sort((a, b) => b.price - a.price);
-      } else if (selectedFilter.value === 'nameAsc') {
-        sortedProducts = sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
-      } else if (selectedFilter.value === 'nameDesc') {
-        sortedProducts = sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
       }
-
       return sortedProducts;
     });
 
@@ -137,6 +128,17 @@ export default {
 </script>
 
 <style scoped>
+/* Aumentar el padding-top para el contenedor principal */
+.pt-16 {
+  padding-top: 6rem;
+}
+
+/* Margen superior adicional para el filtro */
+.mt-8 {
+  margin-top: 2rem;
+}
+
+/* Otros estilos existentes */
 .mx-2 {
   font-size: 1.2em;
   font-weight: bold;
@@ -161,10 +163,5 @@ export default {
 
 .v-img:hover {
   transform: scale(1.05);
-}
-
-/* Aumentar el padding-top para alejar más el contenido del Navbar */
-.pt-12 {
-  padding-top: 5rem; /* Ajusta este valor según el espacio necesario */
 }
 </style>
