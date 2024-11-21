@@ -51,6 +51,9 @@
           <v-list-item @click="goToCreateProduct" class="dropdown-item">
             <v-list-item-title>Crear Producto</v-list-item-title>
           </v-list-item>
+          <v-list-item @click="goToMyProducts" class="dropdown-item">
+            <v-list-item-title>Mis Productos</v-list-item-title>
+          </v-list-item>
           <v-list-item @click="goToMyAccount" class="dropdown-item">
             <v-list-item-title>Mi Cuenta</v-list-item-title>
           </v-list-item>
@@ -83,8 +86,8 @@ export default {
       username: localStorage.getItem("username") || null,
       isMenuOpen: false,
       menuPosition: {
-        
-      
+        left: 0,
+        top: 0
       },
     };
   },
@@ -103,6 +106,10 @@ export default {
     goToCreateProduct() {
       this.isMenuOpen = false; // Cerrar menú
       this.$router.push("/create-product");
+    },
+    goToMyProducts() {
+      this.isMenuOpen = false; // Cerrar menú
+      this.$router.push("/mis-productos");
     },
     goToMyAccount() {
       this.isMenuOpen = false; // Cerrar menú

@@ -6,6 +6,7 @@ import Cart from "../views/Cart.vue";
 import MyAccount from "../views/MyAccount.vue";
 import ProductList from "../views/ProductList.vue";
 import CreateProduct from "../views/CreateProduct.vue";
+import MisProductos from "@/views/MisProductos.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -14,7 +15,8 @@ const routes = [
   { path: "/cart", name: "cart", component: Cart },
   { path: "/mi_cuenta", name: "my-account", component: MyAccount },
   { path: "/store/products", name: "product-list", component: ProductList },
-  { path: "/create-product", name: "CreateProduct",component: CreateProduct, meta: { requiresAuth: true },
+  { path: "/mis-productos", name: "MisProductos", component: MisProductos },
+  { path: "/create-product", name: "CreateProduct", component: CreateProduct, meta: { requiresAuth: true },
   },
 ];
 

@@ -80,18 +80,27 @@ async def list_products(
         "products": [product_serializer(product) for product in products]
     }
 
+@router.get("/my-products")
+async def get_user_products(current_user=Depends(get_user)):
+    # Filtrar productos por el vendedor actual
+    products = await db["products"].find({"seller": current_user["username"]}).to_list(length=None)
+    
+    if not products:
+        raise HTTPException(status_code=404, detail="No se encontraron productos para este usuario")
+
+    return {
+        "products": [product_serializer(product) for product in products]
+    }
+
 @router.delete("/products/{product_id}")
 async def delete_product(product_id: str, current_user=Depends(get_user)):
-    # Verificar si el producto existe
     product = await db["products"].find_one({"_id": ObjectId(product_id)})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
 
-    # Verificar si el usuario es el vendedor del producto
     if product["seller"] != current_user["username"]:
         raise HTTPException(status_code=403, detail="No tienes permiso para eliminar este producto")
 
-    # Eliminar el producto
     result = await db["products"].delete_one({"_id": ObjectId(product_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=500, detail="Error al eliminar el producto")
@@ -108,16 +117,13 @@ async def edit_product(
     file: Optional[UploadFile] = File(None),
     current_user=Depends(get_user)
 ):
-    # Verificar si el producto existe
     product = await db["products"].find_one({"_id": ObjectId(product_id)})
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
 
-    # Verificar si el usuario es el vendedor del producto
     if product["seller"] != current_user["username"]:
         raise HTTPException(status_code=403, detail="No tienes permiso para editar este producto")
 
-    # Preparar los datos para la actualización
     update_data = {}
     if name:
         update_data["name"] = name
@@ -128,7 +134,6 @@ async def edit_product(
     if quantity is not None:
         update_data["quantity"] = quantity
     if file:
-        # Guardar la nueva imagen si se sube
         file_location = f"app/static/images/{file.filename}"
         try:
             with open(file_location, "wb") as f:
@@ -137,7 +142,6 @@ async def edit_product(
             raise HTTPException(status_code=500, detail="Error al guardar la nueva imagen")
         update_data["imagen"] = f"/static/images/{file.filename}"
 
-    # Actualizar el producto
     result = await db["products"].update_one(
         {"_id": ObjectId(product_id)},
         {"$set": update_data}
