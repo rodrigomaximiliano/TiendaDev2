@@ -13,7 +13,7 @@ const routes = [
   { path: "/login", name: "login", component: Login },
   { path: "/register", name: "register", component: Register },
   { path: "/cart", name: "cart", component: Cart },
-  { path: "/mi_cuenta", name: "my-account", component: MyAccount },
+  { path: "/mi_cuenta", name: "miCuenta", component: MyAccount },
   { path: "/store/products", name: "product-list", component: ProductList },
   { path: "/mis-productos", name: "MisProductos", component: MisProductos },
   { path: "/create-product", name: "CreateProduct", component: CreateProduct, meta: { requiresAuth: true },

@@ -30,9 +30,9 @@
       <v-menu
         v-model="isMenuOpen"
         :close-on-content-click="false"
-        :style="{ left: `${menuPosition.left}px`, top: `${menuPosition.top}px` }"
         transition="scale-transition"
         offset-y
+        :style="menuPositionStyle"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -48,13 +48,13 @@
         </template>
 
         <v-list class="dropdown-menu">
-          <v-list-item @click="goToCreateProduct" class="dropdown-item">
+          <v-list-item @click="navigateTo('/create-product')" class="dropdown-item">
             <v-list-item-title>Crear Producto</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="goToMyProducts" class="dropdown-item">
+          <v-list-item @click="navigateTo('/mis-productos')" class="dropdown-item">
             <v-list-item-title>Mis Productos</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="goToMyAccount" class="dropdown-item">
+          <v-list-item @click="navigateTo('/mi_cuenta')" class="dropdown-item">
             <v-list-item-title>Mi Cuenta</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -81,9 +81,22 @@
 <script>
 export default {
   name: "Navbar",
+  computed: {
+    username() {
+      return localStorage.getItem("username") || null;
+    },
+    isAuthenticated() {
+      return !!localStorage.getItem("token");
+    },
+    menuPositionStyle() {
+      return {
+        left: `${this.menuPosition.left}px`,
+        top: `${this.menuPosition.top}px`
+      };
+    }
+  },
   data() {
     return {
-      username: localStorage.getItem("username") || null,
       isMenuOpen: false,
       menuPosition: {
         left: 0,
@@ -91,38 +104,20 @@ export default {
       },
     };
   },
-  computed: {
-    isAuthenticated() {
-      return !!localStorage.getItem("token");
-    },
-  },
   methods: {
     logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("username");
-      this.username = null;
       this.$router.push("/login");
     },
-    goToCreateProduct() {
+    navigateTo(route) {
       this.isMenuOpen = false; // Cerrar menú
-      this.$router.push("/create-product");
-    },
-    goToMyProducts() {
-      this.isMenuOpen = false; // Cerrar menú
-      this.$router.push("/mis-productos");
-    },
-    goToMyAccount() {
-      this.isMenuOpen = false; // Cerrar menú
-      this.$router.push("/my-account");
+      this.$router.push(route);
     },
     openMenu(event) {
-      // Captura la posición del botón en el que se hace clic
       const button = event.target.getBoundingClientRect();
-      
-      // Calcula la posición del menú con base en la posición del botón
       this.menuPosition.left = button.left;
       this.menuPosition.top = button.bottom;
-
       this.isMenuOpen = true;
     }
   },
@@ -147,8 +142,8 @@ export default {
 
 /* Estilos para el dropdown */
 .dropdown-menu {
-  background-color: #ffffff; /* Fondo más suave */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 0;
   margin-top: 8px;
@@ -157,7 +152,7 @@ export default {
   transition: background-color 0.2s ease-in-out;
 }
 .dropdown-item:hover {
-  background-color: rgba(93, 135, 212, 0.1); /* Color de hover más suave */
+  background-color: rgba(93, 135, 212, 0.1);
 }
 
 /* Estilos para el logo */

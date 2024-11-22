@@ -18,14 +18,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center">
-      <v-col cols="100" sm="60" md="11" lg="50">
-        <v-img
-          :src="require('@/assets/bannersito.png')"
-          class="banner-img mx-auto mb-2"
-        />
-      </v-col>
-    </v-row>
+   
 
   </v-container>
 </template>
@@ -42,11 +35,6 @@ export default {
 </script>
 
 <style scoped>
-.banner-img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
 
 .carousel-container {
   display: flex;
