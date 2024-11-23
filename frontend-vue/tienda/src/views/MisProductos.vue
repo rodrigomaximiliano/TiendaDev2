@@ -3,7 +3,6 @@
     <Navbar />
     <v-divider class="my-6" />
 
-    <!-- Título destacado -->
     <v-row justify="center" class="mb-6">
       <v-col cols="12" class="text-center">
         <h2 class="display-1 font-weight-bold" style="color: var(--v-primary-base)">
@@ -12,13 +11,14 @@
       </v-col>
     </v-row>
 
-    <!-- Lista de Productos -->
     <v-row>
       <v-col v-for="product in products" :key="product.id" cols="12" sm="6" md="3">
         <v-card outlined class="elevation-2">
-          <v-img :src="product.imagen ? `http://localhost:8000${product.imagen}` : 'https://via.placeholder.com/300x200'"
-                 alt="Imagen del producto"
-                 height="200px" />
+          <v-img
+            :src="product.imagen ? `http://localhost:8000${product.imagen}` : 'https://via.placeholder.com/300x200'"
+            alt="Imagen del producto"
+            height="200px"
+          />
           <v-card-title class="text-h6">{{ product.name }}</v-card-title>
           <v-card-subtitle>{{ product.description }}</v-card-subtitle>
           <v-card-text>
@@ -27,18 +27,13 @@
             <v-chip :color="product.status === 'Vendido' ? 'red' : 'green'" dark small>{{ product.status }}</v-chip>
           </v-card-text>
           <v-card-actions>
-            <v-col class="d-flex justify-start" cols="auto">
-              <v-btn text color="primary" @click="editProduct(product)">Editar</v-btn>
-            </v-col>
-            <v-col class="d-flex justify-end" cols="auto">
-              <v-btn text color="red" @click="deleteProduct(product.id)">Eliminar</v-btn>
-            </v-col>
+            <v-btn text color="primary" @click="editProduct(product)">Editar</v-btn>
+            <v-btn text color="red" @click="deleteProduct(product.id)">Eliminar</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
-    <!-- Diálogo para Editar Producto -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>Editar Producto</v-card-title>
@@ -52,7 +47,6 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
           <v-btn text @click="dialog = false">Cancelar</v-btn>
           <v-btn text color="primary" @click="saveChanges">Guardar</v-btn>
         </v-card-actions>
@@ -64,55 +58,35 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
-import { computed, ref } from "vue";
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const dialog = ref(false);
-    const isLoading = ref(false);
-    const { products, editedProduct } = store;
+    const { products, editedProduct, dialog } = store;
 
     const editProduct = (product) => {
       store.setEditedProduct(product);
-      dialog.value = true;
     };
 
     const updateProductImage = (file) => {
-      if (file) editedProduct.imagen = file;
+      if (file && file instanceof File) {
+        store.editedProduct.file = file;
+      }
     };
 
     const saveChanges = async () => {
-      isLoading.value = true;
-      try {
-        await store.saveProduct();
-        dialog.value = false;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        isLoading.value = false;
-      }
+      await store.saveProduct();
+      dialog.value = false;
     };
 
     const deleteProduct = async (id) => {
-      isLoading.value = true;
-      try {
-        await store.deleteProduct(id);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        isLoading.value = false;
-      }
+      await store.deleteProduct(id);
     };
 
     store.fetchProducts();
 
-    return { products, editedProduct, dialog, isLoading, editProduct, updateProductImage, saveChanges, deleteProduct };
+    return { products, editedProduct, dialog, editProduct, updateProductImage, saveChanges, deleteProduct };
   },
 };
 </script>
-
-<style scoped>
-/* Estilos adicionales aquí si es necesario */
-</style>
