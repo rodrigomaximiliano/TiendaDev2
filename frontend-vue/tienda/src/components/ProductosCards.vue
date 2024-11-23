@@ -2,19 +2,20 @@
   <v-container>
     <!-- Encabezado estilizado -->
     <v-row
-  justify="center"
-  align="center"
-  class="header-row"
-  style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 10px; border-radius: 8px;"
->
-
+      justify="center"
+      align="center"
+      class="header-row"
+      style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 10px; border-radius: 8px;"
+    >
       <v-col cols="12" class="text-center">
         <v-icon size="8" color="white" class="mb-2 animate-icon">
           mdi-star
         </v-icon>
+        <!-- Título con estilo semibold -->
         <h1 class="header-title">
           ¡Descubre nuestros Productos!
         </h1>
+        <!-- Subtítulo con estilo normal -->
         <p class="header-subtitle">
           ¿Tenés productos para vender? Registrate a nuestra plataforma y empieza a vender hoy mismo.
         </p>
@@ -143,7 +144,6 @@ export default {
   font-weight: 700;
   margin: 0;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-  
 }
 
 .header-subtitle {
@@ -198,5 +198,4 @@ export default {
   font-weight: bold;
   color: #29c0fc;
 }
-
 </style>

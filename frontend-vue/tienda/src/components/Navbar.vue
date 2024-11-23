@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="#5d87d4">
+    <v-app-bar app :style="{ background: 'linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%)' }">
     <!-- Logo -->
     <v-img 
       src="/logo.svg" 
@@ -162,4 +162,5 @@ export default {
 .logo-transition:hover {
   transform: scale(1.05);
 }
+
 </style>
