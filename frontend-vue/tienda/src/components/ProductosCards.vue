@@ -156,6 +156,7 @@ export default {
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border-radius: 8px;
   border-color: rgba(0, 0, 0, 0.7);
+  background: whitesmoke;
   
 }
 
