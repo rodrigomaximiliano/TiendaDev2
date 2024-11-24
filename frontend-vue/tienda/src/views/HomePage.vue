@@ -18,7 +18,9 @@
       <v-container>
         <About />
       </v-container>
-
+      <v-container>
+        <Tarjetas />
+      </v-container>
 
       <Banersito />
    
@@ -35,6 +37,7 @@ import Banner from '@/components/Banner.vue';
 import ProductosCards from "@/components/ProductosCards.vue";
 import Banersito from "@/components/Banersito.vue";
 import About from '../components/About.vue';
+import Tarjetas from '../components/Tarjetas.vue';
 
 export default {
   name: "HomePage",
@@ -46,6 +49,7 @@ export default {
     ProductosCards,
     Banersito,
     About,
+    Tarjetas,
   },
 };
 </script>

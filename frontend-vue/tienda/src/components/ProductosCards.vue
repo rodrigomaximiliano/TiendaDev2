@@ -155,6 +155,8 @@ export default {
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border-radius: 8px;
+  border-color: rgba(0, 0, 0, 0.7);
+  
 }
 
 .product-card:hover {
@@ -169,7 +171,7 @@ export default {
   left: -100%;
   width: 200%;
   height: 100%;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(90deg, rgba(29, 24, 24, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
   transition: all 0.4s ease;
   transform: skewX(-20deg);
   z-index: 2;
