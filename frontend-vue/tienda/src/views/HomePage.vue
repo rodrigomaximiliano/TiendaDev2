@@ -7,10 +7,10 @@
         <Carrusel />
       </v-container>
 
-      <!-- Banner si es necesario -->
+      
       <Banner />
 
-      <!-- Colocar el componente ProductosCards debajo del contenido principal -->
+      
       <v-container>
         <ProductosCards />
       </v-container>

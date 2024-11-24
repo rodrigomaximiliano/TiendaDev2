@@ -10,10 +10,7 @@
         md="4"
       >
         <v-card class="pa-4 card-hover" elevation="2">
-          <!-- Parte superior con gradiente -->
           <div class="header-gradient"></div>
-
-          <!-- Contenido del texto -->
           <v-card-title class="mt-5 text-h5 font-weight-bold text-primary">
             {{ item.title }}
           </v-card-title>
@@ -24,34 +21,36 @@
       </v-col>
     </v-row>
 
-    <!-- Sección de estadísticas -->
-    <v-row justify="center" align="center">
-      <v-col
-        v-for="(stat, index) in stats"
-        :key="index"
-        cols="12"
-        sm="6"
-        md="3"
-      >
-        <v-card
-          class="stat-card d-flex flex-column justify-center align-center"
-          elevation="4"
+    <!-- Sección de estadísticas (con un contenedor div para el ref) -->
+    <div ref="statsSection">
+      <v-row justify="center" align="center">
+        <v-col
+          v-for="(stat, index) in stats"
+          :key="index"
+          cols="12"
+          sm="6"
+          md="3"
         >
-          <div class="stat-number text-h3 font-weight-bold text-info">
-            {{ getAnimatedNumber(stat.number) }}
-            <span class="text-sm align-top">{{ stat.symbol }}</span>
-          </div>
-          <div class="stat-label text-h6 font-weight-medium">
-            {{ stat.label }}
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-card
+            class="stat-card d-flex flex-column justify-center align-center"
+            elevation="4"
+          >
+            <div class="stat-number text-h3 font-weight-bold text-info">
+              {{ getAnimatedNumber(stat.number) }}
+              <span class="text-sm align-top">{{ stat.symbol }}</span>
+            </div>
+            <div class="stat-label text-h6 font-weight-medium">
+              {{ stat.label }}
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 
 export default {
   setup() {
@@ -95,11 +94,12 @@ export default {
 
     const animatedNumbers = ref({});
 
+    // Función para iniciar el contador
     const startCounter = () => {
       stats.forEach((stat) => {
         let currentValue = 0;
         const targetValue = stat.number;
-        const step = Math.ceil(targetValue / 50); // Incrementar en pasos más pequeños
+        const step = Math.ceil(targetValue / 20); // Incrementar en pasos más pequeños
         const interval = setInterval(() => {
           currentValue += step;
           if (currentValue >= targetValue) {
@@ -115,14 +115,36 @@ export default {
       return animatedNumbers.value[number] || 0;
     };
 
+    // Ref para la sección de estadísticas
+    const statsSection = ref(null);
+
+    // Usar IntersectionObserver para activar el contador cuando sea visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Iniciar el contador cuando el componente es visible
+            startCounter();
+          }
+        });
+      },
+      { threshold: 0.5 } // 50% del componente visible
+    );
+
     onMounted(() => {
-      startCounter();
+      nextTick(() => {
+        // Asegurarse de que el ref es un elemento DOM antes de observarlo
+        if (statsSection.value) {
+          observer.observe(statsSection.value);
+        }
+      });
     });
 
     return {
       cards,
       stats,
       getAnimatedNumber,
+      statsSection,
     };
   },
 };
