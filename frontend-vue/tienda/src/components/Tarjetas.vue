@@ -1,22 +1,7 @@
 <template>
   <v-container class="py-2">
-    <Imagenban />
+    <Imagenban class="imageban-separation" />
     
-    <v-row
-      justify="center"
-      align="center"
-      class="header-row"
-      style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 6px; border-radius: 4px;"
-    >
-      <v-col cols="12" class="text-center">
-        <h1 class="header-title">Servicios</h1>
-        <p class="header-subtitle">
-          Sabemos que cada vendedor y comprador tiene necesidades únicas. Por eso, nuestros servicios están pensados para 
-          ayudarte a optimizar tu experiencia de compra y venta.
-        </p>
-      </v-col>
-    </v-row>
-
     <!-- Tarjetas -->
     <v-row justify="center" dense>
       <v-col
@@ -127,6 +112,11 @@ export default {
 </script>
 
 <style scoped>
+/* Separación para el componente Imagenban */
+.imageban-separation {
+  margin-bottom: 30px; /* Ajusta este valor según el espacio que desees */
+}
+
 /* Estilos específicos para las tarjetas */
 .flip-card {
   perspective: 1000px;
@@ -180,25 +170,6 @@ export default {
 
 .icon-color {
   color: #5187f1;
-}
-
-.header-title {
-  color: white;
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-}
-
-.header-subtitle {
-  color: white;
-  font-size: 1.1rem;
-  margin-top: 4px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-.header-row {
-  margin-top: 0px;
-  margin-bottom: 12px;
 }
 
 .flip-card-front,

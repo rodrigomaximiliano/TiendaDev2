@@ -27,7 +27,7 @@ async def create_product_with_image(
     description: str = Form(...),
     price: float = Form(...),
     quantity: int = Form(...),
-    file: UploadFile = File(...),  # Asegúrate de que el nombre del campo sea 'file'
+    file: UploadFile = File(...), 
     current_user=Depends(get_user),
 ):
     if price <= 0:
@@ -82,7 +82,6 @@ async def list_products(
 
 @router.get("/my-products")
 async def get_user_products(current_user=Depends(get_user)):
-    # Filtrar productos por el vendedor actual
     products = await db["products"].find({"seller": current_user["username"]}).to_list(length=None)
     
     if not products:

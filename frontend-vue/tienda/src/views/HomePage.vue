@@ -2,28 +2,36 @@
   <v-app>
     <Navbar />
     <v-main>
-      <!-- Contenedor principal que no debería ser bloqueado -->
-      <v-container fluid class="main-container">
+      <!-- Carrusel (con padding ajustado) -->
+      <v-container fluid class="pa-0">
         <Carrusel />
       </v-container>
 
-      
-      <Banner />
+      <!-- Banner con padding reducido -->
+      <v-container fluid class="mt-0 pa-0">
+        <Banner />
+      </v-container>
 
-      
-      <v-container>
+      <!-- Productos Cards (con espacio controlado) -->
+      <v-container fluid class="my-2">
         <ProductosCards />
       </v-container>
-    
-      <v-container>
+
+      <!-- About (con márgenes más pequeños) -->
+      <v-container fluid class="my-2">
         <About />
       </v-container>
-      <v-container>
+
+      <!-- Tarjetas (espaciado reducido entre tarjetas) -->
+      <v-container fluid class="my-2">
         <Tarjetas />
       </v-container>
 
-      <Banersito />
-   
+      <!-- Banersito con márgenes controlados -->
+      <v-container fluid class="mt-0 pa-0">
+        <Banersito />
+      </v-container>
+
     </v-main>
     <Footer />
   </v-app>

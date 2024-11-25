@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <Navbar />
   <v-container fluid class="d-flex align-center justify-center" style="height: 100vh;">
     <v-card>
       <v-card-title class="headline text-center">Registrarse</v-card-title>
@@ -30,15 +32,20 @@
       </v-card-actions>
     </v-card>
   </v-container>
+</div>
 </template>
 
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import Navbar from '@/components/Navbar.vue';
 
 export default {
   name: 'Register',
+  components: {
+    Navbar 
+  },
   setup() {
     const username = ref('');
     const password = ref('');

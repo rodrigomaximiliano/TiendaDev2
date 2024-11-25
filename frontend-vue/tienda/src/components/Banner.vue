@@ -78,9 +78,9 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  margin-top: 20px;
+  margin-top: 1px;
   overflow: hidden;
-  width: 100%;
+  width:100%;
   background: linear-gradient(to right, #f2f4f5, #dffafd); 
   padding: 10px;
   border-radius: 10px;

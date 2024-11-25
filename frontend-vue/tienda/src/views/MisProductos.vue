@@ -3,27 +3,16 @@
     <Navbar />
     <v-divider class="my-6" />
 
-    <!-- Título más pequeño -->
+    <!-- Título -->
     <v-row justify="center" class="mb-1">
-  <v-col cols="4" md="2" lg="6" class="text-center">
-    <div
-      class="py-2 px-6 rounded-lg elevation-2"
-      style="background-color: #f5f5f5;"
-    >
-      <v-icon size="36" color="#1976d2" class="mb-1">mdi-cart-outline</v-icon>
-      <h2
-        class="text-h4 font-weight-bold mb-1"
-        style="color: #1976d2; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);"
-      >
-        Mis productos en venta
-      </h2>
-      <p class="text-subtitle-2" style="color: #546e7a;">
-        Administra y visualiza los productos que tienes en oferta.
-      </p>
-    </div>
-  </v-col>
-</v-row>
-
+      <v-col cols="12" md="8" lg="6" class="text-center">
+        <div class="py-2 px-6 rounded-lg elevation-2" style="background-color: #f5f5f5;">
+          <v-icon size="36" color="#1976d2" class="mb-1">mdi-cart-outline</v-icon>
+          <h2 class="text-h4 font-weight-bold mb-1" style="color: #1976d2;">Mis productos en venta</h2>
+          <p class="text-subtitle-2" style="color: #546e7a;">Administra y visualiza tus productos.</p>
+        </div>
+      </v-col>
+    </v-row>
 
     <!-- Listado de productos -->
     <v-row>
@@ -45,22 +34,13 @@
           <v-card-text>
             <div><strong>Precio:</strong> ${{ product.price }}</div>
             <div><strong>Cantidad:</strong> {{ product.quantity }}</div>
-            <v-chip
-              :color="product.status === 'Vendido' ? 'red' : 'green'"
-              dark
-              small
-            >
+            <v-chip :color="product.status === 'Vendido' ? 'red' : 'green'" dark small>
               {{ product.status }}
             </v-chip>
           </v-card-text>
-          <!-- Botones separados en extremos -->
           <v-card-actions class="d-flex justify-space-between">
-            <v-btn text color="primary" @click="editProduct(product)"
-              >Editar</v-btn
-            >
-            <v-btn text color="red" @click="deleteProduct(product.id)"
-              >Eliminar</v-btn
-            >
+            <v-btn text color="primary" @click="openEditDialog(product)">Editar</v-btn>
+            <v-btn text color="red" @click="deleteProduct(product.id)">Eliminar</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -73,21 +53,21 @@
         <v-card-text>
           <v-form ref="form">
             <v-text-field
-              v-model="editedProduct.name"
+              v-model="localEditedProduct.name"
               label="Nombre"
               required
               outlined
               dense
             />
             <v-textarea
-              v-model="editedProduct.description"
+              v-model="localEditedProduct.description"
               label="Descripción"
               required
               outlined
               dense
             />
             <v-text-field
-              v-model="editedProduct.price"
+              v-model="localEditedProduct.price"
               label="Precio"
               type="number"
               required
@@ -95,7 +75,7 @@
               dense
             />
             <v-text-field
-              v-model="editedProduct.quantity"
+              v-model="localEditedProduct.quantity"
               label="Cantidad"
               type="number"
               required
@@ -123,28 +103,43 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
+import { ref } from "vue";
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const { products, editedProduct, dialog } = store;
+    const { products, setEditedProduct } = store;
 
-    const editProduct = (product) => {
-      store.setEditedProduct(product);
+    const dialog = ref(false); // Local dialog control
+    const localEditedProduct = ref({}); // Local copy of edited product
+
+    // Abre el diálogo y configura el producto a editar
+    const openEditDialog = (product) => {
+      console.log("Editando producto:", product); // Depuración
+      setEditedProduct(product); // Actualiza el store
+      localEditedProduct.value = { ...product }; // Copia local del producto
+      dialog.value = true; // Abre el diálogo
     };
 
+    // Actualizar la imagen del producto
     const updateProductImage = (file) => {
       if (file && file instanceof File) {
-        store.editedProduct.file = file;
+        localEditedProduct.value.imagen = file; // Guardar el archivo seleccionado en la propiedad imagen
       }
     };
 
+    // Guardar cambios del producto
     const saveChanges = async () => {
-      await store.saveProduct();
-      dialog.value = false;
+      try {
+        await store.saveProduct(localEditedProduct.value); // Pasa los datos al store
+        dialog.value = false; // Cerrar el diálogo
+      } catch (error) {
+        console.error("Error al guardar los cambios:", error);
+      }
     };
 
+    // Eliminar producto
     const deleteProduct = async (id) => {
       await store.deleteProduct(id);
     };
@@ -153,9 +148,9 @@ export default {
 
     return {
       products,
-      editedProduct,
       dialog,
-      editProduct,
+      localEditedProduct,
+      openEditDialog,
       updateProductImage,
       saveChanges,
       deleteProduct,
@@ -165,17 +160,6 @@ export default {
 </script>
 
 <style scoped>
-/* Reducido el tamaño de los márgenes */
-.mb-4 {
-  margin-bottom: 16px !important;
-}
-
-/* Título más pequeño */
-.subtitle-1 {
-  font-size: 1.6rem !important;
-}
-
-/* Botones bien espaciados */
 .v-card-actions {
   padding-left: 16px;
   padding-right: 16px;
