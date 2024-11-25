@@ -117,7 +117,7 @@ export default {
 </script>
 
 <style scoped>
-/* Encabezado */
+
 .header-title {
   color: white;
   font-size: 2.5rem;
@@ -162,7 +162,7 @@ export default {
 
 .product-card:hover {
   transform: scale(1.05);
-  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .product-card::before {

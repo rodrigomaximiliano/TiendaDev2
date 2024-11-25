@@ -1,30 +1,29 @@
 <template>
-  <v-container class="py-12">
-    
-    <v-row justify="center" class="mb-16">
-  <v-col cols="12" md="10" class="text-center">
-    <!-- Título -->
-    <h2 class="text-[48px] sm:text-[56px] lg:text-[64px] font-semibold text-gray-800 mb-6">
-      Nuestros Servicios
-    </h2>
-    <!-- Descripción -->
-    <p class="text-[18px] sm:text-[20px] lg:text-[24px] text-gray-600 mx-auto max-w-[950px] px-4 opacity-80">
-      Sabemos que cada vendedor y comprador tiene necesidades únicas. Por eso, nuestros servicios están pensados para 
-      ayudarte a optimizar tu experiencia de compra y venta, ofreciendo herramientas poderosas que te permiten expandir tu negocio y encontrar lo que buscas de manera eficiente.
-    </p>
-  </v-col>
-</v-row>
-
+  <v-container class="py-2">
+    <v-row
+      justify="center"
+      align="center"
+      class="header-row"
+      style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 6px; border-radius: 4px;"
+    >
+      <v-col cols="12" class="text-center">
+        <h1 class="header-title">Servicios</h1>
+        <p class="header-subtitle">
+          Sabemos que cada vendedor y comprador tiene necesidades únicas. Por eso, nuestros servicios están pensados para 
+          ayudarte a optimizar tu experiencia de compra y venta, ofreciendo herramientas poderosas que te permiten expandir tu negocio.
+        </p>
+      </v-col>
+    </v-row>
 
     <!-- Tarjetas -->
     <v-row justify="center" dense>
       <v-col
-        cols="12"
+        cols="8"
         md="4"
         lg="4"
         v-for="(service, index) in services"
         :key="index"
-        class="d-flex justify-center my-4"
+        class="d-flex justify-center my-1"
       >
         <div class="flip-card">
           <div class="flip-card-inner">
@@ -32,10 +31,12 @@
             <div class="flip-card-front rounded-lg bg-white shadow-card p-6">
               <div class="flex flex-col items-center gap-5">
                 <v-icon :size="60" class="icon-color">{{ service.icon }}</v-icon>
-                <h4 class="text-center text-[24px] font-semibold text-gray-800">
+                <!-- Título con estilo "text-primary" -->
+                <h4 class="text-center text-h8 font-weight-bold text-primary">
                   {{ service.title }}
                 </h4>
-                <p class="text-center text-[15px] text-gray-600 leading-relaxed">
+                <!-- Descripción con estilo "text-secondary" -->
+                <p class="text-center text-body-1 text-secondary">
                   {{ service.description }}
                 </p>
               </div>
@@ -45,10 +46,10 @@
             <div class="flip-card-back rounded-lg bg-lightblue text-white p-6">
               <div class="flex flex-col items-center gap-5">
                 <v-icon :size="60" class="icon-color">{{ service.icon }}</v-icon>
-                <h4 class="text-center text-[24px] font-semibold">
+                <h4 class="text-center text-h8 font-weight-bold">
                   {{ service.title }}
                 </h4>
-                <p class="text-center text-[15px] leading-relaxed">
+                <p class="text-center text-body-1">
                   {{ service.details }}
                 </p>
               </div>
@@ -78,41 +79,41 @@ export default {
           icon: "mdi-palette",
           title: "Diseño UX/UI",
           description:
-            "Nuestro equipo se encarga de diseñar interfaces atractivas y fáciles de usar que mejoran la experiencia de compra y venta.",
+            "Nuestro equipo diseña interfaces atractivas y fáciles de usar que mejoran la experiencia de compra y venta.",
           details:
             "Creamos interfaces intuitivas para garantizar una navegación rápida, agradable y sin complicaciones para compradores y vendedores.",
         },
         {
-          icon: "mdi-web",
-          title: "Desarrollo Web",
+          icon: "mdi-cart",
+          title: "Tienda en Línea",
           description:
-            "Desarrollamos sitios web robustos y optimizados para todos los dispositivos, para que tu tienda online funcione perfectamente en cualquier pantalla.",
+            "Nuestra plataforma permite a los usuarios comprar productos de manera sencilla y también vender sus propios artículos.",
           details:
-            "Desde diseños responsivos hasta integraciones avanzadas, nos aseguramos de que tu tienda en línea sea eficaz y fácil de usar.",
+            "Con herramientas avanzadas, puedes gestionar tu tienda personal, recibir pedidos y ampliar tu mercado mientras disfrutas de una experiencia de compra intuitiva y confiable.",
         },
         {
-          icon: "mdi-cog",
-          title: "Software Personalizado",
+          icon: "mdi-store",
+          title: "Marketplace",
           description:
-            "Ofrecemos soluciones de software a medida para satisfacer las necesidades específicas de tu negocio de ventas en línea.",
+            "Un espacio donde compradores y vendedores se conectan fácilmente para intercambiar productos.",
           details:
-            "Nuestro equipo de ingenieros trabaja con las últimas tecnologías para entregar soluciones escalables y eficientes, adaptadas a tus requerimientos.",
+            "Crea tu perfil de vendedor, publica tus productos y accede a una audiencia global, mientras disfrutas de la comodidad de un ecosistema seguro y eficiente.",
         },
         {
           icon: "mdi-cloud",
-          title: "Soluciones en la Nube",
+          title: "Soluciones",
           description:
-            "Migramos y gestionamos tus operaciones comerciales en la nube de forma sencilla, asegurando que tu tienda esté siempre disponible y segura.",
+            "Gestionamos tus operaciones comerciales en la nube de forma sencilla, asegurando que la tienda esté siempre disponible y segura.",
           details:
             "Nuestros expertos en la nube garantizan un entorno seguro y escalable para que tu negocio crezca sin preocupaciones.",
         },
         {
           icon: "mdi-security",
-          title: "Ciberseguridad",
+          title: "Seguridad",
           description:
-            "Protege tus activos digitales y los datos de tus clientes con nuestros servicios de ciberseguridad avanzados.",
+            "Protegemos tus activos digitales y los datos de tus clientes con nuestros servicios de seguridad avanzados.",
           details:
-            "Ofrecemos protección contra amenazas cibernéticas, asegurando que la información de tu tienda y clientes esté siempre segura.",
+            "Ofrecemos protección contra amenazas, asegurando que la información de la tienda y clientes esté siempre segura.",
         },
       ],
     };
@@ -126,6 +127,7 @@ export default {
   width: 100%;
   max-width: 320px;
   height: 350px;
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .flip-card-inner {
@@ -147,44 +149,48 @@ export default {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 16px;
+ border-radius: 8px 8px 0 0;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 16px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 12px 8px 10px rgba(0, 0, 0, 0.1);
 }
 
 .flip-card-front {
-  background-color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .flip-card-back {
-  background-color: #a2cffe; 
+  background-color: #a2cffe;
   transform: rotateY(180deg);
   color: white;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
-
-h2 {
-  font-family: "Inter", sans-serif;
-  margin-bottom: 16px;
-}
-
-p {
-  font-family: "Inter", sans-serif;
-  color: #4d4d4d;
-}
-
-
 .shadow-card {
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-
 .icon-color {
-  color: #5187f1; 
+  color: #5187f1;
+}
+
+.header-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.header-subtitle {
+  color: white;
+  font-size: 1.2rem;
+  margin-top: 8px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.header-row {
+  margin-bottom: 40px;
 }
 </style>

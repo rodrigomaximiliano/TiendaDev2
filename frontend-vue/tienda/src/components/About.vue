@@ -10,7 +10,8 @@
         md="4"
       >
         <v-card class="pa-4 card-hover" elevation="2">
-          <div class="header-gradient"></div>
+          <!-- Encabezado de color -->
+          <div :class="['header-gradient', item.color]"></div>
           <v-card-title class="mt-5 text-h5 font-weight-bold text-primary">
             {{ item.title }}
           </v-card-title>
@@ -21,7 +22,7 @@
       </v-col>
     </v-row>
 
-    <!-- Sección de estadísticas (con un contenedor div para el ref) -->
+    <!-- Sección de estadísticas -->
     <div ref="statsSection">
       <v-row justify="center" align="center">
         <v-col
@@ -58,14 +59,17 @@ export default {
       {
         title: "¿Quiénes somos?",
         text: "Somos una plataforma de ventas en línea que vende y permite vender a personas y negocios vender sus productos fácilmente.",
+        color: "bg-blue",
       },
       {
         title: "¿Dónde estamos?",
         text: "Nuestra sede está en Corrientes, Argentina pero nuestra plataforma está disponible para vendedores de todo el mundo.",
+        color: "bg-blue",
       },
       {
         title: "¿Cómo lo hacemos?",
         text: "Con una interfaz fácil de usar y funciones sólidas, lo ayudamos a enumerar, administrar y vender sus productos con facilidad.",
+        color: "bg-blue",
       },
     ];
 
@@ -94,12 +98,11 @@ export default {
 
     const animatedNumbers = ref({});
 
-    // Función para iniciar el contador
     const startCounter = () => {
       stats.forEach((stat) => {
         let currentValue = 0;
         const targetValue = stat.number;
-        const step = Math.ceil(targetValue / 20); // Incrementar en pasos más pequeños
+        const step = Math.ceil(targetValue / 20);
         const interval = setInterval(() => {
           currentValue += step;
           if (currentValue >= targetValue) {
@@ -115,25 +118,21 @@ export default {
       return animatedNumbers.value[number] || 0;
     };
 
-    // Ref para la sección de estadísticas
     const statsSection = ref(null);
 
-    // Usar IntersectionObserver para activar el contador cuando sea visible
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Iniciar el contador cuando el componente es visible
             startCounter();
           }
         });
       },
-      { threshold: 0.5 } // 50% del componente visible
+      { threshold: 0.5 }
     );
 
     onMounted(() => {
       nextTick(() => {
-        // Asegurarse de que el ref es un elemento DOM antes de observarlo
         if (statsSection.value) {
           observer.observe(statsSection.value);
         }
@@ -151,6 +150,9 @@ export default {
 </script>
 
 <style scoped>
+.cards{
+  border-radius: 8px 8px 0 0;
+}
 .card-hover {
   transition: all 0.3s ease-in-out;
   border-radius: 12px;
@@ -161,9 +163,20 @@ export default {
 }
 
 .header-gradient {
-  height: 12px;
-  background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%);
-  border-radius: 6px;
+  height: 21px;
+  border-radius: 12px 12px 0 0;
+}
+
+.bg-blue {
+  background-color: #377db6;
+}
+
+.bg-green {
+  background-color: #377db6; 
+}
+
+.bg-purple {
+  background-color: #377db6; 
 }
 
 .stat-card {
