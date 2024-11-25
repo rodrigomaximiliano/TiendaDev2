@@ -1,5 +1,7 @@
 <template>
   <v-container class="py-2">
+    <Imagenban />
+    
     <v-row
       justify="center"
       align="center"
@@ -10,7 +12,7 @@
         <h1 class="header-title">Servicios</h1>
         <p class="header-subtitle">
           Sabemos que cada vendedor y comprador tiene necesidades únicas. Por eso, nuestros servicios están pensados para 
-          ayudarte a optimizar tu experiencia de compra y venta, ofreciendo herramientas poderosas que te permiten expandir tu negocio.
+          ayudarte a optimizar tu experiencia de compra y venta.
         </p>
       </v-col>
     </v-row>
@@ -23,19 +25,17 @@
         lg="4"
         v-for="(service, index) in services"
         :key="index"
-        class="d-flex justify-center my-1"
+        class="d-flex justify-center my-2"
       >
         <div class="flip-card">
           <div class="flip-card-inner">
             <!-- Lado Frontal -->
-            <div class="flip-card-front rounded-lg bg-white shadow-card p-6">
-              <div class="flex flex-col items-center gap-5">
+            <div class="flip-card-front rounded-lg bg-white shadow-card p-4">
+              <div class="flex flex-col items-center gap-4">
                 <v-icon :size="60" class="icon-color">{{ service.icon }}</v-icon>
-                <!-- Título con estilo "text-primary" -->
                 <h4 class="text-center text-h8 font-weight-bold text-primary">
                   {{ service.title }}
                 </h4>
-                <!-- Descripción con estilo "text-secondary" -->
                 <p class="text-center text-body-1 text-secondary">
                   {{ service.description }}
                 </p>
@@ -43,8 +43,8 @@
             </div>
 
             <!-- Lado Trasero -->
-            <div class="flip-card-back rounded-lg bg-lightblue text-white p-6">
-              <div class="flex flex-col items-center gap-5">
+            <div class="flip-card-back rounded-lg bg-lightblue text-white p-4">
+              <div class="flex flex-col items-center gap-4">
                 <v-icon :size="60" class="icon-color">{{ service.icon }}</v-icon>
                 <h4 class="text-center text-h8 font-weight-bold">
                   {{ service.title }}
@@ -62,8 +62,13 @@
 </template>
 
 <script>
+import Imagenban from './Imagenban.vue'; 
+
 export default {
   name: "ServiceCards",
+  components: {
+    Imagenban, 
+  },
   data() {
     return {
       services: [
@@ -122,6 +127,7 @@ export default {
 </script>
 
 <style scoped>
+/* Estilos específicos para las tarjetas */
 .flip-card {
   perspective: 1000px;
   width: 100%;
@@ -149,7 +155,7 @@ export default {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
- border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -178,19 +184,25 @@ export default {
 
 .header-title {
   color: white;
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .header-subtitle {
   color: white;
-  font-size: 1.2rem;
-  margin-top: 8px;
+  font-size: 1.1rem;
+  margin-top: 4px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .header-row {
-  margin-bottom: 40px;
+  margin-top: 0px;
+  margin-bottom: 12px;
+}
+
+.flip-card-front,
+.flip-card-back {
+  padding: 12px;
 }
 </style>

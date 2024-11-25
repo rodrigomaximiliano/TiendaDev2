@@ -5,7 +5,7 @@
       justify="center"
       align="center"
       class="header-row"
-      style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 10px; border-radius: 8px;"
+      style="background: linear-gradient(135deg, #5d87d4 0%, #00c6ff 100%); padding: 2px 6px; border-radius: 8px;"
     >
       <v-col cols="12" class="text-center">
         <v-icon size="8" color="white" class="mb-2 animate-icon">
