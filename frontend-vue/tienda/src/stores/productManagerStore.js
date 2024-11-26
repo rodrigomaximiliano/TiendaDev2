@@ -1,21 +1,22 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import Swal from 'sweetalert2'; // Importar SweetAlert
+import Swal from "sweetalert2";
 
 export const useProductManagerStore = defineStore("productManager", {
   state: () => ({
-    products: [], // Lista de productos obtenidos del servidor
-    editedProduct: {}, // Producto actualmente en edición
+    products: [],
+    editedProduct: null,
+    loading: false,
   }),
 
   actions: {
-    /**
-     * Fetch products from the server and update the state.
-     */
     async fetchProducts() {
       try {
         const username = localStorage.getItem("username");
         if (!username) throw new Error("Usuario no autenticado");
+
+        // Mostrar loader si no hay datos precargados
+        if (!this.products.length) this.loading = true;
 
         const response = await axios.get(
           `http://localhost:8000/store/my-products?username=${username}`,
@@ -28,35 +29,29 @@ export const useProductManagerStore = defineStore("productManager", {
         }));
       } catch (error) {
         console.error("Error al obtener productos:", error);
-        this.products = [];
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudieron cargar los productos.",
+        });
+      } finally {
+        this.loading = false;
       }
     },
 
-    /**
-     * Set the product to be edited in the state.
-     * @param {Object} product - The product to be edited.
-     */
     setEditedProduct(product) {
-      this.editedProduct = { ...product }; // Copia del producto
+      this.editedProduct = { ...product };
     },
 
-    /**
-     * Save the edited product to the server.
-     * @param {Object} updatedProduct - The updated product data.
-     */
     async saveProduct(updatedProduct) {
       try {
         const username = localStorage.getItem("username");
         if (!username) throw new Error("Usuario no autenticado");
 
         const formData = new FormData();
-        formData.append("name", updatedProduct.name);
-        formData.append("description", updatedProduct.description);
-        formData.append("price", updatedProduct.price);
-        formData.append("quantity", updatedProduct.quantity);
-        if (updatedProduct.imagen) {
-          formData.append("imagen", updatedProduct.imagen);
-        }
+        Object.keys(updatedProduct).forEach((key) => {
+          if (updatedProduct[key] !== null) formData.append(key, updatedProduct[key]);
+        });
 
         const response = await axios.put(
           `http://localhost:8000/store/products/${updatedProduct.id}?username=${username}`,
@@ -65,27 +60,31 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
+          // Actualizar el producto en el estado
           const index = this.products.findIndex((product) => product.id === updatedProduct.id);
           if (index !== -1) {
-            this.products[index] = { ...this.products[index], ...updatedProduct };
+            this.products[index] = {
+              ...this.products[index],
+              ...updatedProduct,
+              status: updatedProduct.quantity > 0 ? "En Venta" : "Vendido",
+            };
           }
-        } else {
-          throw new Error("Error al guardar el producto");
+          Swal.fire({
+            icon: "success",
+            title: "Guardado",
+            text: "El producto se ha actualizado correctamente.",
+          });
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error al guardar los cambios.',
-        });
         console.error("Error al guardar el producto:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un problema al guardar el producto.",
+        });
       }
     },
 
-    /**
-     * Delete a product from the server and state.
-     * @param {Number} productId - The product ID to delete.
-     */
     async deleteProduct(productId) {
       try {
         const username = localStorage.getItem("username");
@@ -97,37 +96,22 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
+          // Eliminar el producto del estado
           this.products = this.products.filter((product) => product.id !== productId);
-        } else {
-          throw new Error("Error al eliminar el producto");
+          Swal.fire({
+            icon: "success",
+            title: "Eliminado",
+            text: "El producto se ha eliminado correctamente.",
+          });
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error al eliminar el producto.',
-        });
         console.error("Error al eliminar el producto:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo eliminar el producto.",
+        });
       }
-    },
-
-    /**
-     * Update a product in the local state.
-     * @param {Object} updatedProduct - The updated product data.
-     */
-    updateProduct(updatedProduct) {
-      const index = this.products.findIndex((product) => product.id === updatedProduct.id);
-      if (index !== -1) {
-        this.products[index] = { ...this.products[index], ...updatedProduct };
-      }
-    },
-
-    /**
-     * Remove a product from the local state.
-     * @param {Number} productId - The product ID to remove.
-     */
-    removeProduct(productId) {
-      this.products = this.products.filter((product) => product.id !== productId);
     },
   },
 });

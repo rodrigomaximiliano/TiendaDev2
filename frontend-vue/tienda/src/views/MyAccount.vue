@@ -1,85 +1,118 @@
 <template>
   <v-app>
     <Navbar />
-  <v-container>
-    <h1>Mi Cuenta</h1>
-    <!-- Formulario de perfil -->
-    <v-form @submit.prevent="updateProfile" v-model="isFormValid">
-      <v-text-field
-        label="Usuario"
-        v-model="username"
-        disabled
-        outlined
-      ></v-text-field>
+    <v-container>
+      <v-row>
+        <!-- Título principal centrado -->
+        <v-col cols="12">
+          <h1 class="text-center my-4">Mi Cuenta</h1>
+        </v-col>
+      </v-row>
 
-      <v-text-field
-        label="Correo Electrónico"
-        v-model="email"
-        type="email"
-        :rules="[emailRule]"
-        outlined
-      ></v-text-field>
+      <!-- Formulario de perfil -->
+      <v-row>
+        <v-col cols="12">
+          <v-form @submit.prevent="updateProfile" v-model="isFormValid">
+            <v-text-field
+              label="Usuario"
+              v-model="username"
+              disabled
+              outlined
+              class="mb-4"
+            ></v-text-field>
 
-      <v-btn 
-        type="submit" 
-        :disabled="!isFormValid" 
-        color="primary"
-      >
-        Actualizar Perfil
-      </v-btn>
+            <v-text-field
+              label="Correo Electrónico"
+              v-model="email"
+              type="email"
+              :rules="[emailRule]"
+              outlined
+              class="mb-4"
+            ></v-text-field>
 
+            <v-btn
+              type="submit"
+              :disabled="!isFormValid"
+              color="primary"
+              class="my-4 w-full"
+            >
+              Actualizar Perfil
+            </v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+
+      <!-- Espaciado de sección -->
       <v-divider class="my-4"></v-divider>
 
       <!-- Foto de perfil -->
-      <v-img
-        :src="profilePictureUrl"
-        alt="Foto de perfil"
-        class="my-4"
-        max-width="150"
-        max-height="150"
-      ></v-img>
+      <v-row justify="center">
+        <v-col cols="12" class="text-center">
+          <v-img
+            :src="profilePictureUrl"
+            alt="Foto de perfil"
+            class="rounded-circle my-4"
+            max-width="150"
+            max-height="150"
+          ></v-img>
 
-      <v-btn @click="openChangeProfilePictureDialog" color="secondary">
-        Cambiar Foto de Perfil
-      </v-btn>
-    </v-form>
-    
-    <!-- Diálogo para cambiar la foto -->
-    <v-dialog v-model="isChangeProfilePictureDialogOpen" max-width="400px">
-      <v-card>
-        <v-card-title class="headline">Cambiar Foto de Perfil</v-card-title>
-        <v-card-text>
-          <v-file-input
-            label="Seleccionar imagen"
-            v-model="newProfilePicture"
-            accept="image/*"
-            outlined
-          ></v-file-input>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="isChangeProfilePictureDialogOpen = false" color="grey">Cancelar</v-btn>
-          <v-btn @click="updateProfilePicture" color="primary">Actualizar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <v-btn
+            @click="openChangeProfilePictureDialog"
+            color="secondary"
+            class="mt-3"
+          >
+            Cambiar Foto de Perfil
+          </v-btn>
+        </v-col>
+      </v-row>
 
-    <!-- Cambiar contraseña -->
-    <v-divider class="my-4"></v-divider>
-    <v-form @submit.prevent="updatePassword">
-      <v-text-field
-        label="Nueva Contraseña"
-        v-model="newPassword"
-        type="password"
-        outlined
-      ></v-text-field>
-      <v-btn type="submit" color="primary">Cambiar Contraseña</v-btn>
-    </v-form>
-  </v-container>
-</v-app>
+      <!-- Diálogo para cambiar la foto -->
+      <v-dialog v-model="isChangeProfilePictureDialogOpen" max-width="400px">
+        <v-card>
+          <v-card-title class="headline">Cambiar Foto de Perfil</v-card-title>
+          <v-card-text>
+            <v-file-input
+              label="Seleccionar imagen"
+              v-model="newProfilePicture"
+              accept="image/*"
+              outlined
+            ></v-file-input>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              @click="isChangeProfilePictureDialogOpen = false"
+              color="grey"
+            >
+              Cancelar
+            </v-btn>
+            <v-btn @click="updateProfilePicture" color="primary">Actualizar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Sección de cambio de contraseña -->
+      <v-divider class="my-4"></v-divider>
+      <v-row>
+        <v-col cols="12">
+          <v-form @submit.prevent="updatePassword">
+            <v-text-field
+              label="Nueva Contraseña"
+              v-model="newPassword"
+              type="password"
+              outlined
+              class="mb-4"
+            ></v-text-field>
+            <v-btn type="submit" color="primary" class="w-full">Cambiar Contraseña</v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+
 export default {
   components: {
     Navbar,
@@ -192,12 +225,26 @@ export default {
 
 <style scoped>
 .v-container {
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
 }
 
-/* Estilo para los botones de acción */
+/* Botones y contenedores */
 .v-btn {
   margin-top: 16px;
+}
+
+.v-row {
+  margin-top: 20px;
+}
+
+/* Imagen de perfil redondeada */
+.rounded-circle {
+  border-radius: 50%;
+}
+
+/* Mejorar visibilidad de campos de texto */
+.v-text-field {
+  margin-bottom: 1rem;
 }
 </style>

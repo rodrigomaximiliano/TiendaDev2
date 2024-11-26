@@ -3,7 +3,12 @@
     <Navbar />
     <v-divider class="my-6" />
 
-    <!-- Título -->
+    <v-row v-if="loading" justify="center" class="my-6">
+      <v-col cols="12" class="text-center">
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      </v-col>
+    </v-row>
+
     <v-row justify="center" class="mb-1">
       <v-col cols="12" md="8" lg="6" class="text-center">
         <div class="py-2 px-6 rounded-lg elevation-2" style="background-color: #f5f5f5;">
@@ -14,15 +19,8 @@
       </v-col>
     </v-row>
 
-    <!-- Listado de productos -->
     <v-row>
-      <v-col
-        v-for="product in products"
-        :key="product.id"
-        cols="12"
-        sm="6"
-        md="3"
-      >
+      <v-col v-for="product in products" :key="product.id" cols="12" sm="6" md="3">
         <v-card outlined class="elevation-2">
           <v-img
             :src="product.imagen ? `http://localhost:8000${product.imagen}` : 'https://via.placeholder.com/300x200'"
@@ -46,49 +44,16 @@
       </v-col>
     </v-row>
 
-    <!-- Diálogo para editar producto -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>Editar Producto</v-card-title>
         <v-card-text>
           <v-form ref="form">
-            <v-text-field
-              v-model="localEditedProduct.name"
-              label="Nombre"
-              required
-              outlined
-              dense
-            />
-            <v-textarea
-              v-model="localEditedProduct.description"
-              label="Descripción"
-              required
-              outlined
-              dense
-            />
-            <v-text-field
-              v-model="localEditedProduct.price"
-              label="Precio"
-              type="number"
-              required
-              outlined
-              dense
-            />
-            <v-text-field
-              v-model="localEditedProduct.quantity"
-              label="Cantidad"
-              type="number"
-              required
-              outlined
-              dense
-            />
-            <v-file-input
-              label="Cambiar Imagen"
-              @change="updateProductImage"
-              accept="image/*"
-              outlined
-              dense
-            />
+            <v-text-field v-model="localEditedProduct.name" label="Nombre" required outlined dense />
+            <v-textarea v-model="localEditedProduct.description" label="Descripción" required outlined dense />
+            <v-text-field v-model="localEditedProduct.price" label="Precio" type="number" required outlined dense />
+            <v-text-field v-model="localEditedProduct.quantity" label="Cantidad" type="number" required outlined dense />
+            <v-file-input label="Cambiar Imagen" @change="updateProductImage" accept="image/*" outlined dense />
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -103,17 +68,18 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Swal from 'sweetalert2';
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const { products, removeProduct, setEditedProduct } = store;
+    const { products, setEditedProduct } = store;
 
     const dialog = ref(false);
     const localEditedProduct = ref({});
+    const loading = ref(false);
 
     const openEditDialog = (product) => {
       setEditedProduct(product);
@@ -130,6 +96,7 @@ export default {
     const saveChanges = async () => {
       try {
         await store.saveProduct(localEditedProduct.value);
+        store.updateProduct(localEditedProduct.value);
         Swal.fire({
           icon: 'success',
           title: 'Producto actualizado',
@@ -146,6 +113,7 @@ export default {
       }
     };
 
+    // Confirmar la eliminación de producto
     const confirmDeleteProduct = (id) => {
       Swal.fire({
         title: '¿Estás seguro?',
@@ -159,8 +127,7 @@ export default {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            await store.deleteProduct(id); // Elimina el producto del backend
-            removeProduct(id); // Elimina el producto del estado local
+            await store.deleteProduct(id);
             Swal.fire({
               icon: 'success',
               title: 'Producto eliminado',
@@ -178,7 +145,17 @@ export default {
       });
     };
 
-    store.fetchProducts();
+    // Cargar productos al montar el componente
+    const fetchProducts = async () => {
+      loading.value = true;
+      await store.fetchProducts();
+      loading.value = false;
+    };
+
+    // Llamar a fetchProducts cuando el componente se monte
+    onMounted(() => {
+      fetchProducts();
+    });
 
     return {
       products,
@@ -188,6 +165,7 @@ export default {
       updateProductImage,
       saveChanges,
       confirmDeleteProduct,
+      loading
     };
   },
 };
