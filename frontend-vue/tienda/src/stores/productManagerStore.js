@@ -96,7 +96,6 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
-          // Eliminar el producto del estado
           this.products = this.products.filter((product) => product.id !== productId);
           Swal.fire({
             icon: "success",
