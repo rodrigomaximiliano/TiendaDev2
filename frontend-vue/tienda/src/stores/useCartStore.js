@@ -9,7 +9,7 @@ export const useCartStore = defineStore('cartStore', {
   actions: {
     async fetchCart() {
       const token = localStorage.getItem("token");
-      const username = localStorage.getItem("username"); // Obtener el username desde el localStorage
+      const username = localStorage.getItem("username"); 
 
       if (!token || !username) {
         console.error("Token o username no encontrados. Por favor, inicie sesión.");
@@ -17,7 +17,6 @@ export const useCartStore = defineStore('cartStore', {
       }
 
       try {
-        // Incluir el username en la URL
         const response = await axios.get(`http://localhost:8000/cart/view?username=${username}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -39,7 +38,6 @@ export const useCartStore = defineStore('cartStore', {
       }
 
       try {
-        // Incluir el username en la URL para la eliminación del producto
         const response = await axios.delete(`http://localhost:8000/cart/remove?username=${username}&product_id=${productId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -49,6 +47,12 @@ export const useCartStore = defineStore('cartStore', {
         console.error("Error al eliminar del carrito:", error.response?.data || error.message);
         alert('Error al eliminar el producto del carrito');
       }
+    },
+
+    // Asegúrate de tener esta acción correctamente definida
+    addProductToCart(productId, quantity) {
+      // Lógica para añadir el producto al carrito local
+      this.cart.push({ productId, quantity });
     }
   }
 });

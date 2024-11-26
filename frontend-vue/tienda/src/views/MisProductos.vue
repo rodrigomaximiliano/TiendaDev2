@@ -40,7 +40,7 @@
           </v-card-text>
           <v-card-actions class="d-flex justify-space-between">
             <v-btn text color="primary" @click="openEditDialog(product)">Editar</v-btn>
-            <v-btn text color="red" @click="deleteProduct(product.id)">Eliminar</v-btn>
+            <v-btn text color="red" @click="confirmDeleteProduct(product.id)">Eliminar</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -104,44 +104,78 @@
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
 import { ref } from "vue";
+import Swal from 'sweetalert2';
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const { products, setEditedProduct } = store;
+    const { products, removeProduct, setEditedProduct } = store;
 
-    const dialog = ref(false); // Local dialog control
-    const localEditedProduct = ref({}); // Local copy of edited product
+    const dialog = ref(false);
+    const localEditedProduct = ref({});
 
-    // Abre el diálogo y configura el producto a editar
     const openEditDialog = (product) => {
-      console.log("Editando producto:", product); // Depuración
-      setEditedProduct(product); // Actualiza el store
-      localEditedProduct.value = { ...product }; // Copia local del producto
-      dialog.value = true; // Abre el diálogo
+      setEditedProduct(product);
+      localEditedProduct.value = { ...product };
+      dialog.value = true;
     };
 
-    // Actualizar la imagen del producto
     const updateProductImage = (file) => {
       if (file && file instanceof File) {
-        localEditedProduct.value.imagen = file; // Guardar el archivo seleccionado en la propiedad imagen
+        localEditedProduct.value.imagen = file;
       }
     };
 
-    // Guardar cambios del producto
     const saveChanges = async () => {
       try {
-        await store.saveProduct(localEditedProduct.value); // Pasa los datos al store
-        dialog.value = false; // Cerrar el diálogo
+        await store.saveProduct(localEditedProduct.value);
+        Swal.fire({
+          icon: 'success',
+          title: 'Producto actualizado',
+          text: 'Los cambios del producto se han guardado correctamente.',
+        });
+        dialog.value = false;
       } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un error al guardar los cambios.',
+        });
         console.error("Error al guardar los cambios:", error);
       }
     };
 
-    // Eliminar producto
-    const deleteProduct = async (id) => {
-      await store.deleteProduct(id);
+    const confirmDeleteProduct = (id) => {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Este producto será eliminado permanentemente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await store.deleteProduct(id); // Elimina el producto del backend
+            removeProduct(id); // Elimina el producto del estado local
+            Swal.fire({
+              icon: 'success',
+              title: 'Producto eliminado',
+              text: 'El producto ha sido eliminado correctamente.',
+            });
+          } catch (error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Hubo un error al eliminar el producto.',
+            });
+            console.error("Error al eliminar el producto:", error);
+          }
+        }
+      });
     };
 
     store.fetchProducts();
@@ -153,15 +187,8 @@ export default {
       openEditDialog,
       updateProductImage,
       saveChanges,
-      deleteProduct,
+      confirmDeleteProduct,
     };
   },
 };
 </script>
-
-<style scoped>
-.v-card-actions {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-</style>

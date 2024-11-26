@@ -1,15 +1,15 @@
 <template>
   <div>
     <Navbar />
-    <v-container fluid class="pa-4 mt-8"> <!-- Se agregó más espacio con mt-8 -->
-      <!-- Sección de productos en el carrito -->
+    <v-container fluid class="pa-4 mt-8">
       <v-row>
         <v-col 
           v-for="item in cartItems" 
           :key="item.product_id" 
           cols="12" 
-          md="6" 
-          lg="4"
+          sm="6" 
+          md="4" 
+          lg="3"
         >
           <v-card 
             class="mx-auto my-3" 
@@ -47,7 +47,7 @@
                 Ver detalles
               </v-btn>
               <v-btn 
-                @click="removeProductFromCart(item.product_id)" 
+                @click="confirmRemoveProduct(item.product_id)" 
                 color="red" 
                 class="text-uppercase font-weight-bold"
               >
@@ -61,8 +61,8 @@
       <!-- Mensaje cuando el carrito esté vacío -->
       <v-row v-if="cartItems.length === 0" class="d-flex justify-center">
         <v-col class="text-center" cols="12">
-          <v-alert type="info" dismissible>
-            Tu carrito está vacío.
+          <v-alert type="error" dismissible>
+            <v-icon left>mdi-cart-off</v-icon> Tu carrito está vacío.
           </v-alert>
         </v-col>
       </v-row>
@@ -70,7 +70,7 @@
       <!-- Resumen de la compra -->
       <v-row>
         <v-col cols="12" class="text-center">
-          <v-divider></v-divider>
+          <v-divider class="my-4"></v-divider>
           <div class="text-h5 font-weight-bold mb-4">
             <span>Total de la compra: </span>
             <span class="text-primary">${{ totalAmount }}</span>
@@ -94,6 +94,7 @@
 <script>
 import { computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/useCartStore';
+import Swal from 'sweetalert2'; // Importar SweetAlert
 import Navbar from '@/components/Navbar.vue';
 
 export default {
@@ -113,19 +114,54 @@ export default {
       store.fetchCart();
     });
 
-    const removeProductFromCart = async (productId) => {
-      await store.removeProductFromCart(productId);
+    // Confirmar antes de eliminar el producto
+    const confirmRemoveProduct = (productId) => {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Este producto será eliminado de tu carrito.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Si el usuario confirma, eliminamos el producto
+          store.removeProductFromCart(productId);
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto Eliminado',
+            text: 'El producto ha sido eliminado del carrito.',
+          });
+        }
+      });
     };
 
     const checkout = () => {
-      console.log("Proceeding to checkout...");
+      if (cartItems.value.length === 0) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Carrito vacío',
+          text: 'No puedes proceder a pagar con el carrito vacío.',
+        });
+      } else {
+        // Lógica para proceder con el pago
+        Swal.fire({
+          icon: 'info',
+          title: 'Procediendo al pago',
+          text: 'Estás siendo redirigido al proceso de pago.',
+        });
+        console.log("Proceeding to checkout...");
+        // Aquí puedes agregar lógica para redirigir o hacer lo que sea necesario
+      }
     };
 
     const viewProductDetails = (productId) => {
       console.log(`Viewing details for product with ID: ${productId}`);
     };
 
-    return { cartItems, totalAmount, removeProductFromCart, checkout, viewProductDetails };
+    return { cartItems, totalAmount, confirmRemoveProduct, checkout, viewProductDetails };
   },
 };
 </script>
@@ -195,5 +231,11 @@ export default {
 .hover-animation:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.v-divider {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 </style>

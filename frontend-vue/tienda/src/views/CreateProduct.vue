@@ -116,16 +116,6 @@
                 </v-btn>
               </v-card-actions>
             </v-form>
-
-            <!-- Mensaje de éxito o error -->
-            <v-alert 
-              v-if="message" 
-              :type="message.type" 
-              dismissible 
-              class="mt-4"
-            >
-              {{ message.text }}
-            </v-alert>
           </v-card>
         </v-col>
       </v-row>
@@ -134,8 +124,8 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useProductCreateStore } from '@/stores/useProductCreateStore'; // Store
+import { ref, computed, getCurrentInstance } from 'vue';
+import { useProductCreateStore } from '@/stores/useProductCreateStore'; 
 import Navbar from '@/components/Navbar.vue';
 
 export default {
@@ -145,6 +135,7 @@ export default {
   },
   setup() {
     const productStore = useProductCreateStore();
+    const { proxy } = getCurrentInstance(); // Acceso al contexto global ($swal)
 
     const product = ref({
       name: '',
@@ -161,11 +152,28 @@ export default {
     };
 
     const isLoading = computed(() => productStore.isLoading);
-    const message = computed(() => productStore.message);
 
     const submitProduct = async () => {
       const isSuccess = await productStore.createProduct(product.value);
-      if (isSuccess) resetForm();
+
+      if (isSuccess) {
+        resetForm();
+        // Mensaje de éxito
+        proxy.$swal.fire({
+          icon: 'success',
+          title: '¡Producto creado!',
+          text: 'El producto ha sido creado exitosamente.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        // Mensaje de error
+        proxy.$swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: productStore.message?.text || 'Ocurrió un problema al crear el producto.',
+        });
+      }
     };
 
     const resetForm = () => {
@@ -183,7 +191,6 @@ export default {
       valid,
       rules,
       isLoading,
-      message,
       submitProduct,
     };
   },
@@ -191,12 +198,10 @@ export default {
 </script>
 
 <style scoped>
-/* Margen superior para separar del Navbar */
 .mt-6 {
   margin-top: 3rem;
 }
 
-/* Sombra adicional para tarjetas */
 .v-card {
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
@@ -206,7 +211,6 @@ export default {
   transform: translateY(-3px);
 }
 
-/* Efecto de crecimiento para botones */
 .hover-grow {
   transition: transform 0.2s ease;
 }
@@ -215,7 +219,6 @@ export default {
   transform: scale(1.05);
 }
 
-/* Espaciado entre elementos */
 .mb-4 {
   margin-bottom: 1.5rem;
 }

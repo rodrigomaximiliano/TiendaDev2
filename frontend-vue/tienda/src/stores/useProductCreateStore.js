@@ -42,13 +42,13 @@ export const useProductCreateStore = defineStore('productCreateStore', {
           text: response.data.msg || 'Producto creado exitosamente.',
         };
 
-        return true; // Indica que la creación fue exitosa
+        return true; 
       } catch (error) {
         this.message = {
           type: 'error',
           text: error.response?.data?.detail || error.message || 'Error al crear el producto.',
         };
-        return false; // Indica que hubo un error
+        return false; 
       } finally {
         this.isLoading = false;
       }

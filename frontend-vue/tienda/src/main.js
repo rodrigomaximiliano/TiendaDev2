@@ -6,7 +6,7 @@ import 'vuetify/dist/vuetify.min.css';
 import axios from './axios';
 import '@mdi/font/css/materialdesignicons.css';
 import { createPinia } from 'pinia'; 
-
+import Swal from 'sweetalert2';
 
 
 
@@ -17,4 +17,5 @@ app.use(pinia);
 app.use(vuetify);
 app.use(router);
 app.mount('#app');
+app.config.globalProperties.$swal = Swal;
 app.config.globalProperties.$axios = axios;

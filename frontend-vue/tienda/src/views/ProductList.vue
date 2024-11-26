@@ -70,13 +70,14 @@ import { useProductStore } from '../stores/useProductStore';
 import { useCartStore } from '../stores/useCartStore';
 import Navbar from '../components/Navbar.vue';
 import { ref, computed } from 'vue';
+import Swal from 'sweetalert2'; // Importación de SweetAlert2
 
 export default {
   name: 'ProductList',
   components: {
     Navbar,
   },
-  
+
   setup() {
     const productStore = useProductStore();
     const cartStore = useCartStore();
@@ -98,13 +99,31 @@ export default {
       }
     };
 
+    // Función para añadir al carrito
     const addToCart = async (product, quantity) => {
       try {
+        // Intentamos agregar al carrito usando el store
         const msg = await productStore.addToCart(product.id, quantity);
-        alert(msg); 
+
+        // Si la respuesta es exitosa, mostramos la alerta de éxito
+        Swal.fire({
+          title: '¡Producto añadido!',
+          text: `Se añadió ${quantity} ${product.name} al carrito.`,
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        });
+
+        // Luego actualizamos el carrito en el store
         cartStore.addProductToCart(product.id, quantity);
-      } catch {
-        // Error ignorado intencionalmente
+      } catch (error) {
+        // Si hay un error, no debe llegar aquí porque el producto se añade correctamente
+        console.error("Error al añadir el producto:", error); // Esto es solo para depuración
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al añadir el producto al carrito. Intenta nuevamente.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
     };
 
