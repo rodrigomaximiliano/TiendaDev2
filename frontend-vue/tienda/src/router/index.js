@@ -7,6 +7,7 @@ import MyAccount from "../views/MyAccount.vue";
 import ProductList from "../views/ProductList.vue";
 import CreateProduct from "../views/CreateProduct.vue";
 import MisProductos from "@/views/MisProductos.vue";
+import Checkout from "@/views/Checkout.vue"; // Importa el componente Checkout
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -16,8 +17,8 @@ const routes = [
   { path: "/mi_cuenta", name: "miCuenta", component: MyAccount },
   { path: "/store/products", name: "product-list", component: ProductList },
   { path: "/mis-productos", name: "MisProductos", component: MisProductos },
-  { path: "/create-product", name: "CreateProduct", component: CreateProduct, meta: { requiresAuth: true },
-  },
+  { path: "/create-product", name: "CreateProduct", component: CreateProduct, meta: { requiresAuth: true } },
+  { path: "/checkout", name: "Checkout", component: Checkout }, 
 ];
 
 const router = createRouter({

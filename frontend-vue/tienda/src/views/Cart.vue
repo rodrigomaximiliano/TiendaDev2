@@ -17,14 +17,12 @@
             elevation="12" 
             rounded
           >
-            <!-- Imagen del producto -->
             <v-img 
               :src="`http://localhost:8000${item.imagen}`" 
               height="200px" 
               class="rounded-t-lg"
             ></v-img>
 
-            <!-- Nombre y precio del producto -->
             <v-card-title class="headline font-weight-bold">
               {{ item.name }}
             </v-card-title>
@@ -32,17 +30,16 @@
               <span class="text-primary">${{ item.price }}</span>
             </v-card-subtitle>
 
-            <!-- Cantidad -->
             <v-card-text class="d-flex justify-between align-center">
               <div>Cantidad: {{ item.quantity }}</div>
             </v-card-text>
 
-            <!-- Botones -->
             <v-card-actions class="d-flex justify-space-between">
               <v-btn 
                 @click="viewProductDetails(item.product_id)" 
                 color="primary" 
                 class="text-uppercase font-weight-bold"
+                small
               >
                 Ver detalles
               </v-btn>
@@ -50,6 +47,7 @@
                 @click="confirmRemoveProduct(item.product_id)" 
                 color="red" 
                 class="text-uppercase font-weight-bold"
+                small
               >
                 Eliminar
               </v-btn>
@@ -58,7 +56,6 @@
         </v-col>
       </v-row>
 
-      <!-- Mensaje cuando el carrito esté vacío -->
       <v-row v-if="cartItems.length === 0" class="d-flex justify-center">
         <v-col class="text-center" cols="12">
           <v-alert type="error" dismissible>
@@ -67,24 +64,38 @@
         </v-col>
       </v-row>
 
-      <!-- Resumen de la compra -->
-      <v-row>
+      <v-row class="mt-2">
         <v-col cols="12" class="text-center">
           <v-divider class="my-4"></v-divider>
-          <div class="text-h5 font-weight-bold mb-4">
+          <div class="text-h5 font-weight-bold mb-2">
             <span>Total de la compra: </span>
             <span class="text-primary">${{ totalAmount }}</span>
           </div>
-          <!-- Botón de pago -->
-          <v-btn 
-            @click="checkout" 
-            color="green" 
-            large 
-            block 
-            class="mt-4 rounded-lg shadow-2 hover-animation"
-          >
-            Ir a pagar
-          </v-btn>
+          
+          <v-row class="justify-center mt-0">
+            <v-col cols="12" sm="3" class="mb-0">
+              <v-btn 
+                @click="goToProducts" 
+                color="blue" 
+                small
+                block
+                class="rounded-lg shadow-2 hover-animation"
+              >
+                Añadir más productos
+              </v-btn>
+            </v-col>
+            <v-col cols="12" sm="3" class="mb-0">
+              <v-btn 
+                @click="checkout" 
+                color="green" 
+                small
+                block
+                class="rounded-lg shadow-2 hover-animation"
+              >
+                Ir a pagar
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -94,8 +105,9 @@
 <script>
 import { computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/useCartStore';
-import Swal from 'sweetalert2'; // Importar SweetAlert
+import Swal from 'sweetalert2';
 import Navbar from '@/components/Navbar.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Cart',
@@ -104,6 +116,7 @@ export default {
   },
   setup() {
     const store = useCartStore();
+    const router = useRouter();
     const cartItems = computed(() => store.cart);
 
     const totalAmount = computed(() => 
@@ -114,7 +127,6 @@ export default {
       store.fetchCart();
     });
 
-    // Confirmar antes de eliminar el producto
     const confirmRemoveProduct = (productId) => {
       Swal.fire({
         title: '¿Estás seguro?',
@@ -127,7 +139,6 @@ export default {
         cancelButtonText: 'Cancelar',
       }).then((result) => {
         if (result.isConfirmed) {
-          // Si el usuario confirma, eliminamos el producto
           store.removeProductFromCart(productId);
           Swal.fire({
             icon: 'success',
@@ -146,35 +157,32 @@ export default {
           text: 'No puedes proceder a pagar con el carrito vacío.',
         });
       } else {
-        // Lógica para proceder con el pago
-        Swal.fire({
-          icon: 'info',
-          title: 'Procediendo al pago',
-          text: 'Estás siendo redirigido al proceso de pago.',
-        });
-        console.log("Proceeding to checkout...");
-        // Aquí puedes agregar lógica para redirigir o hacer lo que sea necesario
+        router.push("/checkout");
       }
+    };
+
+    const goToProducts = () => {
+      router.push("/store/products");
     };
 
     const viewProductDetails = (productId) => {
       console.log(`Viewing details for product with ID: ${productId}`);
     };
 
-    return { cartItems, totalAmount, confirmRemoveProduct, checkout, viewProductDetails };
+    return { cartItems, totalAmount, confirmRemoveProduct, checkout, goToProducts, viewProductDetails };
   },
 };
 </script>
 
 <style scoped>
-/* Espaciado extra con el navbar */
 .mt-8 {
-  margin-top: 64px; /* Más espacio con el navbar */
+  margin-top: 64px;
 }
 
 .v-btn {
-  margin-top: 10px;
+  margin-top: 5px;
   text-transform: uppercase;
+  font-size: 0.7rem;
 }
 
 .v-card {
@@ -232,7 +240,6 @@ export default {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
-
 
 .v-divider {
   margin-top: 20px;

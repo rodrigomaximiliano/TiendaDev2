@@ -7,7 +7,7 @@
         
           <v-row align="center" justify="center">
             <v-col cols="12" md="4" class="text-center">
-              <v-avatar size="120">
+              <v-avatar size="150"> <!-- Tamaño aumentado aquí -->
                 <img
                   :src="getPhotoUrl(user.photo_url)"
                   alt="Foto de Perfil"
