@@ -68,21 +68,20 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
-import { ref, onMounted } from "vue";
-import Swal from 'sweetalert2';
+import { ref } from "vue";
+import Swal from "sweetalert2";
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const { products, setEditedProduct } = store;
+    const { products } = store;
 
     const dialog = ref(false);
     const localEditedProduct = ref({});
     const loading = ref(false);
 
     const openEditDialog = (product) => {
-      setEditedProduct(product);
       localEditedProduct.value = { ...product };
       dialog.value = true;
     };
@@ -96,76 +95,37 @@ export default {
     const saveChanges = async () => {
       try {
         await store.saveProduct(localEditedProduct.value);
-        store.updateProduct(localEditedProduct.value);
-        Swal.fire({
-          icon: 'success',
-          title: 'Producto actualizado',
-          text: 'Los cambios del producto se han guardado correctamente.',
-        });
         dialog.value = false;
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error al guardar los cambios.',
-        });
         console.error("Error al guardar los cambios:", error);
       }
     };
 
-    // Confirmar la eliminación de producto
     const confirmDeleteProduct = (id) => {
       Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Este producto será eliminado permanentemente.',
-        icon: 'warning',
+        title: "¿Estás seguro?",
+        text: "Este producto será eliminado permanentemente.",
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          try {
-            await store.deleteProduct(id);
-            Swal.fire({
-              icon: 'success',
-              title: 'Producto eliminado',
-              text: 'El producto ha sido eliminado correctamente.',
-            });
-          } catch (error) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Hubo un error al eliminar el producto.',
-            });
-            console.error("Error al eliminar el producto:", error);
-          }
+          await store.deleteProduct(id);
         }
       });
     };
-
-    // Cargar productos al montar el componente
-    const fetchProducts = async () => {
-      loading.value = true;
-      await store.fetchProducts();
-      loading.value = false;
-    };
-
-    // Llamar a fetchProducts cuando el componente se monte
-    onMounted(() => {
-      fetchProducts();
-    });
 
     return {
       products,
       dialog,
       localEditedProduct,
       openEditDialog,
-      updateProductImage,
       saveChanges,
       confirmDeleteProduct,
-      loading
+      loading,
     };
   },
 };

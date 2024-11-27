@@ -1,3 +1,4 @@
+// stores/productManagerStore.js
 import { defineStore } from "pinia";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -5,7 +6,6 @@ import Swal from "sweetalert2";
 export const useProductManagerStore = defineStore("productManager", {
   state: () => ({
     products: [],
-    editedProduct: null,
     loading: false,
   }),
 
@@ -14,9 +14,6 @@ export const useProductManagerStore = defineStore("productManager", {
       try {
         const username = localStorage.getItem("username");
         if (!username) throw new Error("Usuario no autenticado");
-
-        // Mostrar loader si no hay datos precargados
-        if (!this.products.length) this.loading = true;
 
         const response = await axios.get(
           `http://localhost:8000/store/my-products?username=${username}`,
@@ -34,13 +31,7 @@ export const useProductManagerStore = defineStore("productManager", {
           title: "Error",
           text: "No se pudieron cargar los productos.",
         });
-      } finally {
-        this.loading = false;
       }
-    },
-
-    setEditedProduct(product) {
-      this.editedProduct = { ...product };
     },
 
     async saveProduct(updatedProduct) {
@@ -60,9 +51,9 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
-          // Actualizar el producto en el estado
-          const index = this.products.findIndex((product) => product.id === updatedProduct.id);
+          const index = this.products.findIndex((p) => p.id === updatedProduct.id);
           if (index !== -1) {
+            // Actualiza el producto en el estado directamente
             this.products[index] = {
               ...this.products[index],
               ...updatedProduct,
@@ -96,6 +87,7 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
+          // Elimina el producto del estado directamente
           this.products = this.products.filter((product) => product.id !== productId);
           Swal.fire({
             icon: "success",
