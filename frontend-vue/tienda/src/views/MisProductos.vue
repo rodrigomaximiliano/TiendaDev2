@@ -68,18 +68,22 @@
 <script>
 import Navbar from "@/components/Navbar.vue";
 import { useProductManagerStore } from "@/stores/productManagerStore";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Swal from "sweetalert2";
 
 export default {
   components: { Navbar },
   setup() {
     const store = useProductManagerStore();
-    const { products } = store;
+    const { products, loading, fetchProducts, saveProduct, deleteProduct } = store;
 
     const dialog = ref(false);
     const localEditedProduct = ref({});
-    const loading = ref(false);
+
+    // Cargar productos al inicio
+    onMounted(async () => {
+      await fetchProducts();
+    });
 
     const openEditDialog = (product) => {
       localEditedProduct.value = { ...product };
@@ -94,7 +98,7 @@ export default {
 
     const saveChanges = async () => {
       try {
-        await store.saveProduct(localEditedProduct.value);
+        await saveProduct(localEditedProduct.value);
         dialog.value = false;
       } catch (error) {
         console.error("Error al guardar los cambios:", error);
@@ -113,7 +117,7 @@ export default {
         cancelButtonText: "Cancelar",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await store.deleteProduct(id);
+          await deleteProduct(id);
         }
       });
     };

@@ -1,4 +1,3 @@
-// stores/productManagerStore.js
 import { defineStore } from "pinia";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -11,6 +10,7 @@ export const useProductManagerStore = defineStore("productManager", {
 
   actions: {
     async fetchProducts() {
+      this.loading = true;
       try {
         const username = localStorage.getItem("username");
         if (!username) throw new Error("Usuario no autenticado");
@@ -31,6 +31,8 @@ export const useProductManagerStore = defineStore("productManager", {
           title: "Error",
           text: "No se pudieron cargar los productos.",
         });
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -51,14 +53,11 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
+          // Actualizar el producto editado directamente en el estado
+          const updatedProductData = response.data.product;
           const index = this.products.findIndex((p) => p.id === updatedProduct.id);
           if (index !== -1) {
-            // Actualiza el producto en el estado directamente
-            this.products[index] = {
-              ...this.products[index],
-              ...updatedProduct,
-              status: updatedProduct.quantity > 0 ? "En Venta" : "Vendido",
-            };
+            this.products[index] = updatedProductData;
           }
           Swal.fire({
             icon: "success",
@@ -87,7 +86,7 @@ export const useProductManagerStore = defineStore("productManager", {
         );
 
         if (response.status === 200) {
-          // Elimina el producto del estado directamente
+          // Eliminar el producto del estado
           this.products = this.products.filter((product) => product.id !== productId);
           Swal.fire({
             icon: "success",
