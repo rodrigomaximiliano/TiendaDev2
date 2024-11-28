@@ -59,3 +59,25 @@ async def create_order(address: str, paymentMethod: str, items: list, card_numbe
     await db["carts"].delete_many({"user": current_user["username"]})
 
     return {"msg": "Orden creada exitosamente", "total_price": total_price}
+@router.get("/orders")
+async def get_orders(current_user=Depends(get_user)):
+    # Buscar todas las órdenes del usuario actual
+    user_orders = await db["orders"].find({"user": current_user["username"]}).to_list(length=None)
+    
+    if not user_orders:
+        raise HTTPException(status_code=404, detail="No se encontraron órdenes para este usuario")
+    
+    # Formatear los datos de las órdenes (opcional)
+    formatted_orders = []
+    for order in user_orders:
+        formatted_orders.append({
+            "id": str(order["_id"]),
+            "total_price": order["total_price"],
+            "status": order["status"],
+            "items": order["items"],
+            "address": order["address"],
+            "payment_method": order["payment_method"],
+            "created_at": order.get("created_at")  # Si guardas la fecha de creación
+        })
+
+    return {"orders": formatted_orders}
