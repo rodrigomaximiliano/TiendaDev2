@@ -3,12 +3,14 @@
     <Navbar />
     <v-divider class="my-6" />
 
+    <!-- Indicador de carga -->
     <v-row v-if="loading" justify="center" class="my-6">
       <v-col cols="12" class="text-center">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-col>
     </v-row>
 
+    <!-- Encabezado -->
     <v-row justify="center" class="mb-1">
       <v-col cols="12" md="8" lg="6" class="text-center">
         <div class="py-2 px-6 rounded-lg elevation-2" style="background-color: #f5f5f5;">
@@ -19,6 +21,7 @@
       </v-col>
     </v-row>
 
+    <!-- Lista de productos -->
     <v-row>
       <v-col v-for="product in products" :key="product.id" cols="12" sm="6" md="3">
         <v-card outlined class="elevation-2">
@@ -38,12 +41,20 @@
           </v-card-text>
           <v-card-actions class="d-flex justify-space-between">
             <v-btn text color="primary" @click="openEditDialog(product)">Editar</v-btn>
-            <v-btn text color="red" @click="confirmDeleteProduct(product.id)">Eliminar</v-btn>
+            <v-btn
+              text
+              color="red"
+              :loading="deletingProduct === product.id"
+              @click="confirmDeleteProduct(product.id)"
+            >
+              Eliminar
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
 
+    <!-- Diálogo de edición -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>Editar Producto</v-card-title>
@@ -58,7 +69,14 @@
         </v-card-text>
         <v-card-actions>
           <v-btn text @click="dialog = false">Cancelar</v-btn>
-          <v-btn text color="primary" @click="saveChanges">Guardar</v-btn>
+          <v-btn
+            text
+            color="primary"
+            :loading="savingProduct"
+            @click="saveChanges"
+          >
+            Guardar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -79,10 +97,11 @@ export default {
 
     const dialog = ref(false);
     const localEditedProduct = ref({});
+    const savingProduct = ref(false);
+    const deletingProduct = ref(null);
 
-    // Cargar productos al inicio
-    onMounted(async () => {
-      await fetchProducts();
+    onMounted(() => {
+      fetchProducts();
     });
 
     const openEditDialog = (product) => {
@@ -98,15 +117,18 @@ export default {
 
     const saveChanges = async () => {
       try {
+        savingProduct.value = true;
         await saveProduct(localEditedProduct.value);
         dialog.value = false;
       } catch (error) {
         console.error("Error al guardar los cambios:", error);
+      } finally {
+        savingProduct.value = false;
       }
     };
 
-    const confirmDeleteProduct = (id) => {
-      Swal.fire({
+    const confirmDeleteProduct = async (id) => {
+      const result = await Swal.fire({
         title: "¿Estás seguro?",
         text: "Este producto será eliminado permanentemente.",
         icon: "warning",
@@ -115,11 +137,18 @@ export default {
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await deleteProduct(id);
-        }
       });
+
+      if (result.isConfirmed) {
+        deletingProduct.value = id;
+        try {
+          await deleteProduct(id);
+        } catch (error) {
+          console.error("Error al eliminar el producto:", error);
+        } finally {
+          deletingProduct.value = null;
+        }
+      }
     };
 
     return {
@@ -130,6 +159,8 @@ export default {
       saveChanges,
       confirmDeleteProduct,
       loading,
+      savingProduct,
+      deletingProduct,
     };
   },
 };
