@@ -64,5 +64,11 @@ Este proyecto busca proporcionar una plataforma sencilla para la compra y venta 
 
 1. Abre el navegador y accede a la aplicación frontend en `http://localhost:8080` (o el puerto que se indique en la consola).
 2. El backend estará disponible en `http://localhost:8000`.
+![Captura de pantalla 2025-03-07 130835](https://github.com/user-attachments/assets/3af24a5d-d479-4d81-98f1-6bf93915b336)
+![Captura de pantalla 2025-03-07 130921](https://github.com/user-attachments/assets/da69215b-0c7d-4376-beb6-fa9745fcd10a)
+![Captura de pantalla 2025-03-07 130948](https://github.com/user-attachments/assets/cd4cd29d-d942-4d6a-be17-62336eb0b559)
+![Captura de pantalla 2024-11-20 160525](https://github.com/user-attachments/assets/c4faa057-ccfa-4343-abe0-5f1363e64b7e)
+![Captura de pantalla 2024-11-20 160537](https://github.com/user-attachments/assets/5659ba6a-b739-46d9-809b-ad4126ebd29d)
+![Captura de pantalla 2024-11-20 160548](https://github.com/user-attachments/assets/093b39f8-8a3f-4aea-b6f4-f57685d9c613)
 
 
