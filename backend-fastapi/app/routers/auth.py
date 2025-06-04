@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.database import db
-from app.schemas import UserSchema, UserCreateSchema
+from core.database import db
+from schemas.user import UserSchema, UserCreateSchema
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
@@ -82,4 +82,3 @@ async def register(user: UserCreateSchema):
     await db["users"].insert_one(new_user)
     
     return {"message": "User registered successfully"}
-

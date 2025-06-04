@@ -1,8 +1,7 @@
-import os
 from fastapi import APIRouter, HTTPException, Depends
-from app.database import db
-from app.schemas import AddToCartSchema, CartItemResponse
-from app.auth import get_user
+from core.database import db
+from schemas.cart import AddToCartSchema, CartItemResponse
+from routers.auth import get_user
 from bson import ObjectId
 import datetime
 
