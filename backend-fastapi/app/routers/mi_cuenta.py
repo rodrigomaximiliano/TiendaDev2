@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
-from app.database import db
-from app.auth import get_user  # Aquí se debe usar tu función de autenticación.
+from core.database import db
+from routers.auth import get_user
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 import os

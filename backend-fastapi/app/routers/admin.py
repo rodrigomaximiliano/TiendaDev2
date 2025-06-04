@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from app.database import db
-from app.auth import get_user
+from core.database import db
+from routers.auth import get_user
 
 router = APIRouter()
 
@@ -15,4 +15,3 @@ async def update_user_profile(username: str, update_data: dict, current_user=Dep
 
     await db["users"].update_one({"username": username}, {"$set": update_data})
     return {"msg": "User profile updated successfully"}
-
