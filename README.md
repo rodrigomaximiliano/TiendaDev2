@@ -1,69 +1,63 @@
+# TiendaDev2  
+*Final course project at the company DevLights*
 
-# TiendaDev2 Proyecto final cursada en la empresa DevLights
+## Overview
 
-TiendaDev2 es una aplicación web de comercio electrónico desarrollada con **FastAPI** en el backend y **Vue.js** en el frontend.
+**TiendaDev2** is an e-commerce web application developed with **FastAPI** on the backend and **Vue.js** on the frontend.
 
-## Descripción
+This project aims to provide a simple platform for buying and selling products, featuring a clean separation between backend and frontend.
 
-Este proyecto busca proporcionar una plataforma sencilla para la compra y venta de productos, con una arquitectura que separa el backend y el frontend.
+## Technologies
 
-## Tecnologías
+- **Backend:** FastAPI, Python  
+- **Frontend:** Vue.js, JavaScript  
+- **Database:** MongoDB Atlas  
 
-- **Backend**: FastAPI, Python
-- **Frontend**: Vue.js, JavaScript
-- **Base de datos**: MongoDB Atlas
-
-## Instalación
+## Installation
 
 ### Backend
 
-1. Clona el repositorio:
-   ```
+1. Clone the repository:
+
+   ```bash
    git clone https://github.com/rodrigomaximiliano/TiendaDev2.git
-   ```
 
-2. Navega al directorio del backend:
-   ```
-   cd TiendaDev2/backend-fastapi
-   ```
+    Navigate to the backend directory:
 
-3. Crea y activa un entorno virtual:
-   ```
-   poetry shell
-   ```
+cd TiendaDev2/backend-fastapi
 
+Create and activate a virtual environment:
 
-4. Instala las dependencias usando Poetry:
-   ```
-   poetry install
-   ```
+poetry shell
 
-5. Corre la aplicación:
-   ```
-   poetry run uvicorn main:app --reload
-   ```
+Install dependencies:
 
-### Frontend
+poetry install
 
-1. Navega al directorio del frontend:
-   ```
-   cd TiendaDev2/frontend-vue
-   ```
+Run the application:
 
-2. Instala las dependencias:
-   ```
-   npm install
-   ```
+    poetry run uvicorn main:app --reload
 
-3. Corre la aplicación:
-   ```
-   npm run serve
-   ```
+Frontend
 
-## Uso
+    Navigate to the frontend directory:
 
-1. Abre el navegador y accede a la aplicación frontend en `http://localhost:8080` (o el puerto que se indique en la consola).
-2. El backend estará disponible en `http://localhost:8000`.
+cd TiendaDev2/frontend-vue
+
+Install dependencies:
+
+npm install
+
+Run the application:
+
+    npm run serve
+
+Usage
+
+    Open your browser and visit the frontend app at http://localhost:8080 (or the port shown in the console).
+
+    The backend API will be available at http://localhost:8000.
+
 ![Captura de pantalla 2025-03-07 130835](https://github.com/user-attachments/assets/3af24a5d-d479-4d81-98f1-6bf93915b336)
 ![Captura de pantalla 2025-03-07 130921](https://github.com/user-attachments/assets/da69215b-0c7d-4376-beb6-fa9745fcd10a)
 
